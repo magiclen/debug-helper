@@ -154,7 +154,13 @@ println!("{:#?}", a);
 In most cases, you can use the [`derivative`](https://crates.io/crates/derivative) crate to implement the `Debug` trait.
 */
 
-use std::fmt::{self, Formatter, Alignment, Debug};
+#![no_std]
+
+#[macro_use(format)]
+extern crate alloc;
+
+use alloc::fmt::{self, Formatter, Alignment, Debug};
+use alloc::string::ToString;
 
 #[doc(hidden)]
 pub fn pad(t: &impl Debug, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {

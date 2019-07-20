@@ -1,12 +1,12 @@
 [package]
 name = "debug-helper"
-version = "0.1.2"
+version = "0.1.3"
 authors = ["Magic Len <len@magiclen.org>"]
 edition = "2018"
 repository = "https://github.com/magiclen/debug-helper"
 homepage = "https://magiclen.org/debug-helper"
 keywords = ["debug", "macro", "declarative", "format", "trait"]
-categories = ["development-tools::debugging"]
+categories = ["no-std", "development-tools::debugging"]
 description= "This crate provides declarative macros to help you implement the `Debug` trait manually."
 readme = "README.md"
 license = "MIT"
