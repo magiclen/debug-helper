@@ -2,6 +2,7 @@ Debug Helper
 ====================
 
 [![Build Status](https://travis-ci.org/magiclen/debug-helper.svg?branch=master)](https://travis-ci.org/magiclen/debug-helper)
+[![Build status](https://ci.appveyor.com/api/projects/status/8jtt1s8wpontnmu1/branch/master?svg=true)](https://ci.appveyor.com/project/magiclen/debug-helper/branch/master)
 
 This crate provides declarative macros to help you implement the `Debug` trait manually.
 
