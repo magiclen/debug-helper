@@ -20,27 +20,27 @@ impl Debug for A {
 }
 
 fn main() {
-let a = A::V1;
-let b = A::V2(1, 2, std::f64::consts::PI);
-let c = A::V3{
-    f1: 1,
-    f2: 2,
-    f3: std::f64::consts::PI,
-};
-
-println!("{:#?}", a);
-println!("{:#?}", b);
-println!("{:#?}", c);
-
-/*
-    V1
-    V2(
-        1,
-        3.142,
-    )
-    V3 {
+    let a = A::V1;
+    let b = A::V2(1, 2, std::f64::consts::PI);
+    let c = A::V3 {
         f1: 1,
-        f3: 3.142,
-    }
-*/
+        f2: 2,
+        f3: std::f64::consts::PI,
+    };
+
+    println!("{:#?}", a);
+    println!("{:#?}", b);
+    println!("{:#?}", c);
+
+    /*
+        V1
+        V2(
+            1,
+            3.142,
+        )
+        V3 {
+            f1: 1,
+            f3: 3.142,
+        }
+    */
 }

@@ -224,3 +224,32 @@ fn additional_fields() {
     assert_eq!("Outer { f1: 1.23######, f2: Inner { f1: 5#########, f2: 10######## }, f3: Hi }", format!("{:#<10.2?}", outer));
     assert_eq!("Outer {\n    f1: 1.23######,\n    f2: Inner {\n        f1: 5#########,\n        f2: 10########,\n    },\n    f3: Hi,\n}", format!("{:#<#10.2?}", outer));
 }
+
+#[test]
+fn fake_struct() {
+    #[derive(Debug)]
+    struct Inner {
+        f1: u8,
+        f2: u8,
+    }
+
+    struct Outer(f64, Inner);
+
+    impl Debug for Outer {
+        fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
+            impl_debug_for_struct!(Outer, f, self, let .f1 = self.0);
+        }
+    }
+
+    let outer = Outer(1.23456789, Inner {
+        f1: 5,
+        f2: 10,
+    });
+
+    assert_eq!("Outer { f1: 1.23456789 }", format!("{:?}", outer));
+    assert_eq!("Outer {\n    f1: 1.23456789,\n}", format!("{:#?}", outer));
+    assert_eq!("Outer { f1: 0000001.23 }", format!("{:0>10.2?}", outer));
+    assert_eq!("Outer { f1: ???1.23??? }", format!("{:?^10.2?}", outer));
+    assert_eq!("Outer { f1: 1.23###### }", format!("{:#<10.2?}", outer));
+    assert_eq!("Outer {\n    f1: 1.23######,\n}", format!("{:#<#10.2?}", outer));
+}

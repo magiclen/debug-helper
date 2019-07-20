@@ -1,4 +1,4 @@
-#[macro_use(impl_debug_for_struct)]
+#[macro_use(impl_debug_for_tuple_struct)]
 extern crate debug_helper;
 
 use std::fmt::{self, Formatter, Debug};
@@ -11,7 +11,7 @@ pub struct A {
 
 impl Debug for A {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-        impl_debug_for_struct!(A, f, self, .f1, (.f3, "{:.3}", self.f3), (.sum, "{:.3}", self.f1 as f64 + self.f2 as f64 + self.f3));
+        impl_debug_for_tuple_struct!(A, f, self, let .0 = self.f1, let .1 = self.f2, let .2 = self.f3);
     }
 }
 
@@ -25,10 +25,10 @@ fn main() {
     println!("{:#?}", a);
 
     /*
-        A {
-            f1: 1,
-            f3: 3.142,
-            sum: 6.142,
-        }
+        A(
+            1,
+            2,
+            3.141592653589793,
+        )
     */
 }

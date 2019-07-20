@@ -3,6 +3,8 @@
 
 This crate provides declarative macros to help you implement the `Debug` trait manually.
 
+Instead of this crate, in most cases, you can use the [`derivative`](https://crates.io/crates/derivative) crate to implement the `Debug` trait.
+
 ## Examples
 
 For structs,
@@ -115,7 +117,7 @@ println!("{:#?}", c);
 */
 ```
 
-You can add named fields even if they are not defined in your type,
+Ghost fields,
 
 ```rust
 #[macro_use] extern crate debug_helper;
@@ -151,7 +153,102 @@ println!("{:#?}", a);
 */
 ```
 
-In most cases, you can use the [`derivative`](https://crates.io/crates/derivative) crate to implement the `Debug` trait.
+```rust
+#[macro_use] extern crate debug_helper;
+
+use std::fmt::{self, Formatter, Debug};
+
+pub struct A(pub u8, pub i16, pub f64);
+
+impl Debug for A {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
+        impl_debug_for_tuple_struct!(A, f, self, .0, (.2, "{:.3}", self.2), (.3, "{:.3}", self.0 as f64 + self.1 as f64 + self.2));
+    }
+}
+
+let a = A(1, 2, std::f64::consts::PI);
+
+println!("{:#?}", a);
+
+/*
+    A(
+        1,
+        3.142,
+        6.142,
+    )
+*/
+```
+
+Fake structs,
+
+```rust
+#[macro_use] extern crate debug_helper;
+
+use std::fmt::{self, Formatter, Debug};
+
+pub struct A(pub u8, pub i16, pub f64);
+
+impl Debug for A {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
+        impl_debug_for_struct!(A, f, self, let .f1 = self.0, let .f2 = self.1, let .f3 = self.2);
+    }
+}
+
+let a = A(1, 2, std::f64::consts::PI);
+
+println!("{:#?}", a);
+
+/*
+    A {
+        f1: 1,
+        f2: 2,
+        f3: 3.141592653589793,
+    }
+*/
+```
+
+Fake tuple structs,
+
+```rust
+#[macro_use] extern crate debug_helper;
+
+use std::fmt::{self, Formatter, Debug};
+
+pub struct A {
+    pub f1: u8,
+    pub f2: i16,
+    pub f3: f64,
+}
+
+impl Debug for A {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
+        impl_debug_for_tuple_struct!(A, f, self, let .0 = self.f1, let .1 = self.f2, let .2 = self.f3);
+    }
+}
+
+let a = A {
+    f1: 1,
+    f2: 2,
+    f3: std::f64::consts::PI,
+};
+
+println!("{:#?}", a);
+
+/*
+    A(
+        1,
+        2,
+        3.141592653589793,
+    )
+*/
+```
+
+## TODO
+
+1. Fake enum struct variants and tuple variants.
+1. Enum variants can be renamed.
+1. Fake enum variants.
+
 */
 
 #![no_std]
@@ -214,7 +311,7 @@ macro_rules! impl_debug_for_struct {
     ($struct_name:ident, $formatter:expr $(, $self:expr)? $(,)*) => {
         return $formatter.write_str(stringify!($struct_name));
     };
-    ($struct_name:ident, $formatter:expr, $self:expr, $(.$first_field:ident)? $((.$first_field_2:ident, $($first_field_2_fmt:tt)+))? $(, $(.$field:ident)? $((.$field_2:ident, $($field_2_fmt:tt)+))?)* $(,)*) => {
+    ($struct_name:ident, $formatter:expr, $self:expr, $(.$first_field:ident)? $((.$first_field_2:ident, $($first_field_2_fmt:tt)+))? $(let .$first_field_3:ident = $first_field_3_value:expr)? $(, $(.$field:ident)? $((.$field_2:ident, $($field_2_fmt:tt)+))? $(let .$field_3:ident = $field_3_value:expr)?)* $(,)*) => {
         {
             use $crate::alloc::fmt::Write;
 
@@ -255,6 +352,17 @@ macro_rules! impl_debug_for_struct {
             )?
 
             $(
+                $formatter.write_str(stringify!($first_field_3))?;
+                $formatter.write_str(": ")?;
+
+                $crate::pad(&$first_field_3_value, $formatter)?;
+
+                if $formatter.alternate() {
+                    $formatter.write_char(',')?;
+                }
+            )?
+
+            $(
                 $(
                     $formatter.write_str(separator)?;
                     $formatter.write_str(stringify!($field))?;
@@ -280,6 +388,18 @@ macro_rules! impl_debug_for_struct {
                         $formatter.write_fmt(format_args!($($field_2_fmt)*))?;
                     }
                 )?
+
+                $(
+                    $formatter.write_str(separator)?;
+                    $formatter.write_str(stringify!($field_3))?;
+                    $formatter.write_str(": ")?;
+
+                    $crate::pad(&$field_3_value, $formatter)?;
+
+                    if $formatter.alternate() {
+                        $formatter.write_char(',')?;
+                    }
+                )?
             )*
 
             if $formatter.alternate() {
@@ -296,7 +416,7 @@ macro_rules! impl_debug_for_tuple_struct {
     ($struct_name:ident, $formatter:expr $(, $self:expr)? $(,)*) => {
         return $formatter.write_str(stringify!($struct_name));
     };
-    ($struct_name:ident, $formatter:expr, $self:expr, $(.$first_field:tt)? $((.$first_field_2:tt, $($first_field_2_fmt:tt)+))? $(, $(.$field:tt)? $((.$field_2:tt, $($field_2_fmt:tt)+))?)* $(,)*) => {
+    ($struct_name:ident, $formatter:expr, $self:expr, $(.$first_field:tt)? $((.$first_field_2:tt, $($first_field_2_fmt:tt)+))? $(let .$first_field_3:tt = $first_field_3_value:expr)? $(, $(.$field:tt)? $((.$field_2:tt, $($field_2_fmt:tt)+))? $(let .$field_3:tt = $field_3_value:expr)?)* $(,)*) => {
         {
             use $crate::alloc::fmt::Write;
 
@@ -331,6 +451,14 @@ macro_rules! impl_debug_for_tuple_struct {
             )?
 
             $(
+                $crate::pad(&$first_field_3_value, $formatter)?;
+
+                if $formatter.alternate() {
+                    $formatter.write_char(',')?;
+                }
+            )?
+
+            $(
                 $(
                     $formatter.write_str(separator)?;
                     $crate::pad(&$self.$field, $formatter)?;
@@ -351,6 +479,15 @@ macro_rules! impl_debug_for_tuple_struct {
                         $formatter.write_fmt(format_args!($($field_2_fmt)*))?;
                     }
                 )?
+
+                $(
+                    $formatter.write_str(separator)?;
+                    $crate::pad(&$field_3_value, $formatter)?;
+
+                    if $formatter.alternate() {
+                        $formatter.write_char(',')?;
+                    }
+                )?
             )*
 
             if $formatter.alternate() {
@@ -364,7 +501,7 @@ macro_rules! impl_debug_for_tuple_struct {
 
 #[macro_export]
 macro_rules! impl_debug_for_enum {
-    ($enum_name:ident::{$( $($variant_unit:ident)? $(($variant_tuple:ident ($($tuple:tt)*) $(:($(.$t_first_field:tt)? $((.$t_first_field_2:tt, $($t_first_field_2_fmt:tt)+))? $(, $(.$t_field:tt)? $((.$t_field_2:tt, $($t_field_2_fmt:tt)+))?)* $(,)*))? ) )? $({$variant_struct:ident {$($struct:tt)*} $(:($(.$s_first_field:tt)? $((.$s_first_field_2:tt, $($s_first_field_2_fmt:tt)+))? $(, $(.$s_field:tt)? $((.$s_field_2:tt, $($s_field_2_fmt:tt)+))?)* $(,)*))? })? ),+ $(,)*}, $formatter:expr, $self:expr $(,)*) => {
+    ($enum_name:ident::{$( $($variant_unit:ident)? $(($variant_tuple:ident ($($tuple:tt)*) $(:($(.$t_first_field:tt)? $((.$t_first_field_2:tt, $($t_first_field_2_fmt:tt)+))? $(let .$t_first_field_3:tt = $t_first_field_3_value:expr)? $(, $(.$t_field:tt)? $((.$t_field_2:tt, $($t_field_2_fmt:tt)+))? $(let .$t_field_3:tt = $t_field_3_value:expr)?)* $(,)*))? ) )? $({$variant_struct:ident {$($struct:tt)*} $(:($(.$s_first_field:tt)? $((.$s_first_field_2:tt, $($s_first_field_2_fmt:tt)+))? $(let .$s_first_field_3:ident = $s_first_field_3_value:expr)? $(, $(.$s_field:tt)? $((.$s_field_2:tt, $($s_field_2_fmt:tt)+))? $(let .$s_field_3:ident = $s_field_3_value:expr)?)* $(,)*))? })? ),+ $(,)*}, $formatter:expr, $self:expr $(,)*) => {
         {
             use $crate::alloc::fmt::Write;
 
@@ -409,6 +546,14 @@ macro_rules! impl_debug_for_enum {
                                 )?
 
                                 $(
+                                    $crate::pad(&$t_first_field_3_value, $formatter)?;
+
+                                    if $formatter.alternate() {
+                                        $formatter.write_char(',')?;
+                                    }
+                                )?
+
+                                $(
                                     $(
                                         $formatter.write_str(separator)?;
                                         $crate::pad(&$t_field, $formatter)?;
@@ -427,6 +572,15 @@ macro_rules! impl_debug_for_enum {
                                             $formatter.write_char(',')?;
                                         } else {
                                             $formatter.write_fmt(format_args!($($t_field_2_fmt)*))?;
+                                        }
+                                    )?
+
+                                    $(
+                                        $formatter.write_str(separator)?;
+                                        $crate::pad(&$t_field_3_value, $formatter)?;
+
+                                        if $formatter.alternate() {
+                                            $formatter.write_char(',')?;
                                         }
                                     )?
                                 )*
@@ -481,6 +635,17 @@ macro_rules! impl_debug_for_enum {
                                 )?
 
                                 $(
+                                    $formatter.write_str(stringify!($s_first_field_3))?;
+                                    $formatter.write_str(": ")?;
+
+                                    $crate::pad(&$s_first_field_3_value, $formatter)?;
+
+                                    if $formatter.alternate() {
+                                        $formatter.write_char(',')?;
+                                    }
+                                )?
+
+                                $(
                                     $(
                                         $formatter.write_str(separator)?;
                                         $formatter.write_str(stringify!($s_field))?;
@@ -504,6 +669,18 @@ macro_rules! impl_debug_for_enum {
                                             $formatter.write_char(',')?;
                                         } else {
                                             $formatter.write_fmt(format_args!($($s_field_2_fmt)*))?;
+                                        }
+                                    )?
+
+                                    $(
+                                        $formatter.write_str(separator)?;
+                                        $formatter.write_str(stringify!($s_field_3))?;
+                                        $formatter.write_str(": ")?;
+
+                                        $crate::pad(&$s_field_3_value, $formatter)?;
+
+                                        if $formatter.alternate() {
+                                            $formatter.write_char(',')?;
                                         }
                                     )?
                                 )*
