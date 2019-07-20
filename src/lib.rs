@@ -329,12 +329,12 @@ macro_rules! impl_debug_for_enum {
             match $self {
                 $(
                     $(
-                        $enum_name::$variant_unit => {
+                        Self::$variant_unit => {
                             return $formatter.write_str(stringify!($variant_unit));
                         }
                     )?
                     $(
-                        $enum_name::$variant_tuple ($($tuple)*)=> {
+                        Self::$variant_tuple ($($tuple)*)=> {
                             let mut result = $formatter.write_str(stringify!($variant_tuple));
 
                             $(
@@ -400,7 +400,7 @@ macro_rules! impl_debug_for_enum {
                         }
                     )?
                     $(
-                        $enum_name::$variant_struct {$($struct)*}=> {
+                        Self::$variant_struct {$($struct)*}=> {
                             let mut result = $formatter.write_str(stringify!($variant_struct));
 
                             $(

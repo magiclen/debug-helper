@@ -181,6 +181,7 @@ fn one_field_nested() {
 }
 
 #[test]
+#[allow(dead_code)]
 fn all() {
     #[derive(Debug)]
     struct Inner {
