@@ -1,0 +1,19 @@
+[package]
+name = "debug-helper"
+version = "0.1.0"
+authors = ["Magic Len <len@magiclen.org>"]
+edition = "2018"
+repository = "https://github.com/magiclen/debug-helper"
+homepage = "https://magiclen.org/debug-helper"
+keywords = ["debug", "macro", "declarative", "format", "trait"]
+categories = ["development-tools::debugging"]
+description= "This crate provides declarative macros to help you implement the `Debug` trait manually."
+readme = "README.md"
+license = "MIT"
+
+[badges]
+travis-ci = { repository = "magiclen/debug-helper", branch = "master" }
+appveyor = { repository = "magiclen/debug-helper", branch = "master", service = "github" }
+
+
+[dependencies]
