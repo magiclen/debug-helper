@@ -157,7 +157,7 @@ In most cases, you can use the [`derivative`](https://crates.io/crates/derivativ
 #![no_std]
 
 #[macro_use(format)]
-extern crate alloc;
+pub extern crate alloc;
 
 use alloc::fmt::{self, Formatter, Alignment, Debug};
 use alloc::string::ToString;
@@ -216,7 +216,7 @@ macro_rules! impl_debug_for_struct {
     };
     ($struct_name:ident, $formatter:expr, $self:expr, $(.$first_field:ident)? $((.$first_field_2:ident, $($first_field_2_fmt:tt)+))? $(, $(.$field:ident)? $((.$field_2:ident, $($field_2_fmt:tt)+))?)* $(,)*) => {
         {
-            use std::fmt::Write;
+            use $crate::alloc::fmt::Write;
 
             $formatter.write_str(stringify!($struct_name))?;
 
@@ -298,7 +298,7 @@ macro_rules! impl_debug_for_tuple_struct {
     };
     ($struct_name:ident, $formatter:expr, $self:expr, $(.$first_field:tt)? $((.$first_field_2:tt, $($first_field_2_fmt:tt)+))? $(, $(.$field:tt)? $((.$field_2:tt, $($field_2_fmt:tt)+))?)* $(,)*) => {
         {
-            use std::fmt::Write;
+            use $crate::alloc::fmt::Write;
 
             $formatter.write_str(stringify!($struct_name))?;
 
@@ -366,7 +366,7 @@ macro_rules! impl_debug_for_tuple_struct {
 macro_rules! impl_debug_for_enum {
     ($enum_name:ident::{$( $($variant_unit:ident)? $(($variant_tuple:ident ($($tuple:tt)*) $(:($(.$t_first_field:tt)? $((.$t_first_field_2:tt, $($t_first_field_2_fmt:tt)+))? $(, $(.$t_field:tt)? $((.$t_field_2:tt, $($t_field_2_fmt:tt)+))?)* $(,)*))? ) )? $({$variant_struct:ident {$($struct:tt)*} $(:($(.$s_first_field:tt)? $((.$s_first_field_2:tt, $($s_first_field_2_fmt:tt)+))? $(, $(.$s_field:tt)? $((.$s_field_2:tt, $($s_field_2_fmt:tt)+))?)* $(,)*))? })? ),+ $(,)*}, $formatter:expr, $self:expr $(,)*) => {
         {
-            use std::fmt::Write;
+            use $crate::alloc::fmt::Write;
 
             match $self {
                 $(
