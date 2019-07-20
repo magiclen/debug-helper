@@ -333,7 +333,7 @@ fn additional_fields() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_enum!(Outer::{F0, (F1(f1, f2): (.f1, .f2)), {F2{f1, f2}: (.f1, .f2, (/f3, "Hi"))}}, f, self);
+            impl_debug_for_enum!(Outer::{F0, (F1(f1, f2): (.f1, .f2)), {F2{f1, f2}: (.f1, .f2, (.f3, "Hi"))}}, f, self);
         }
     }
 

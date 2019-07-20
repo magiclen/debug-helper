@@ -130,7 +130,7 @@ pub struct A {
 
 impl Debug for A {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-        impl_debug_for_struct!(A, f, self, .f1, (.f3, "{:.3}", self.f3), (/sum, "{:.3}", self.f1 as f64 + self.f2 as f64 + self.f3));
+        impl_debug_for_struct!(A, f, self, .f1, (.f3, "{:.3}", self.f3), (.sum, "{:.3}", self.f1 as f64 + self.f2 as f64 + self.f3));
     }
 }
 
@@ -208,7 +208,7 @@ macro_rules! impl_debug_for_struct {
     ($struct_name:ident, $formatter:expr $(, $self:expr)? $(,)*) => {
         return $formatter.write_str(stringify!($struct_name));
     };
-    ($struct_name:ident, $formatter:expr, $self:expr, $(.$first_field:ident)? $((.$first_field_2:ident, $($first_field_2_fmt:tt)+))? $(, $(.$field:ident)? $((.$field_2:ident, $($field_2_fmt:tt)+))? $((/$field_3:ident, $($field_3_fmt:tt)+))?)* $(,)*) => {
+    ($struct_name:ident, $formatter:expr, $self:expr, $(.$first_field:ident)? $((.$first_field_2:ident, $($first_field_2_fmt:tt)+))? $(, $(.$field:ident)? $((.$field_2:ident, $($field_2_fmt:tt)+))?)* $(,)*) => {
         {
             use std::fmt::Write;
 
@@ -272,20 +272,6 @@ macro_rules! impl_debug_for_struct {
                         $formatter.write_char(',')?;
                     } else {
                         $formatter.write_fmt(format_args!($($field_2_fmt)*))?;
-                    }
-                )?
-
-                $(
-                    $formatter.write_str(separator)?;
-                    $formatter.write_str(stringify!($field_3))?;
-                    $formatter.write_str(": ")?;
-
-                    if $formatter.alternate() {
-                        $formatter.write_str(&format!($($field_3_fmt)*).replace("\n", "\n    "))?;
-
-                        $formatter.write_char(',')?;
-                    } else {
-                        $formatter.write_fmt(format_args!($($field_3_fmt)*))?;
                     }
                 )?
             )*
@@ -372,7 +358,7 @@ macro_rules! impl_debug_for_tuple_struct {
 
 #[macro_export]
 macro_rules! impl_debug_for_enum {
-    ($enum_name:ident::{$( $($variant_unit:ident)? $(($variant_tuple:ident ($($tuple:tt)*) $(:($(.$t_first_field:tt)? $((.$t_first_field_2:tt, $($t_first_field_2_fmt:tt)+))? $(, $(.$t_field:tt)? $((.$t_field_2:tt, $($t_field_2_fmt:tt)+))?)* $(,)*))? ) )? $({$variant_struct:ident {$($struct:tt)*} $(:($(.$s_first_field:tt)? $((.$s_first_field_2:tt, $($s_first_field_2_fmt:tt)+))? $(, $(.$s_field:tt)? $((.$s_field_2:tt, $($s_field_2_fmt:tt)+))? $((/$s_field_3:tt, $($s_field_3_fmt:tt)+))?)* $(,)*))? })? ),+ $(,)*}, $formatter:expr, $self:expr $(,)*) => {
+    ($enum_name:ident::{$( $($variant_unit:ident)? $(($variant_tuple:ident ($($tuple:tt)*) $(:($(.$t_first_field:tt)? $((.$t_first_field_2:tt, $($t_first_field_2_fmt:tt)+))? $(, $(.$t_field:tt)? $((.$t_field_2:tt, $($t_field_2_fmt:tt)+))?)* $(,)*))? ) )? $({$variant_struct:ident {$($struct:tt)*} $(:($(.$s_first_field:tt)? $((.$s_first_field_2:tt, $($s_first_field_2_fmt:tt)+))? $(, $(.$s_field:tt)? $((.$s_field_2:tt, $($s_field_2_fmt:tt)+))?)* $(,)*))? })? ),+ $(,)*}, $formatter:expr, $self:expr $(,)*) => {
         {
             use std::fmt::Write;
 
@@ -512,20 +498,6 @@ macro_rules! impl_debug_for_enum {
                                             $formatter.write_char(',')?;
                                         } else {
                                             $formatter.write_fmt(format_args!($($s_field_2_fmt)*))?;
-                                        }
-                                    )?
-
-                                    $(
-                                        $formatter.write_str(separator)?;
-                                        $formatter.write_str(stringify!($s_field_3))?;
-                                        $formatter.write_str(": ")?;
-
-                                        if $formatter.alternate() {
-                                            $formatter.write_str(&format!($($s_field_3_fmt)*).replace("\n", "\n    "))?;
-
-                                            $formatter.write_char(',')?;
-                                        } else {
-                                            $formatter.write_fmt(format_args!($($s_field_3_fmt)*))?;
                                         }
                                     )?
                                 )*

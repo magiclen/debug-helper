@@ -205,7 +205,7 @@ fn additional_fields() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_struct!(Outer, f, self, .f1, .f2, (/f3, "Hi"));
+            impl_debug_for_struct!(Outer, f, self, .f1, .f2, (.f3, "Hi"));
         }
     }
 
