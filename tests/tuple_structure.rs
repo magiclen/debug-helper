@@ -27,6 +27,7 @@ fn unit() {
 
     assert_eq!("Outer", format!("{:?}", outer));
     assert_eq!("Outer", format!("{:#?}", outer));
+    assert_eq!("Outer", format!("{:010.2?}", outer));
     assert_eq!("Outer", format!("{:0>10.2?}", outer));
     assert_eq!("Outer", format!("{:?^10.2?}", outer));
     assert_eq!("Outer", format!("{:#<10.2?}", outer));
@@ -57,6 +58,7 @@ fn unit_renamed() {
 
     assert_eq!("A", format!("{:?}", outer));
     assert_eq!("A", format!("{:#?}", outer));
+    assert_eq!("A", format!("{:010.2?}", outer));
     assert_eq!("A", format!("{:0>10.2?}", outer));
     assert_eq!("A", format!("{:?^10.2?}", outer));
     assert_eq!("A", format!("{:#<10.2?}", outer));
@@ -87,6 +89,7 @@ fn one_field_primitive() {
 
     assert_eq!("Outer(1.23456789)", format!("{:?}", outer));
     assert_eq!("Outer(\n    1.23456789,\n)", format!("{:#?}", outer));
+    assert_eq!("Outer(0000001.23)", format!("{:010.2?}", outer));
     assert_eq!("Outer(0000001.23)", format!("{:0>10.2?}", outer));
     assert_eq!("Outer(???1.23???)", format!("{:?^10.2?}", outer));
     assert_eq!("Outer(1.23######)", format!("{:#<10.2?}", outer));
@@ -117,6 +120,7 @@ fn one_field_nested() {
 
     assert_eq!("Outer(Inner { f1: 5, f2: 10 })", format!("{:?}", outer));
     assert_eq!("Outer(\n    Inner {\n        f1: 5,\n        f2: 10,\n    },\n)", format!("{:#?}", outer));
+    assert_eq!("Outer(Inner { f1: 0000000005, f2: 0000000010 })", format!("{:010.2?}", outer));
     assert_eq!("Outer(Inner { f1: 0000000005, f2: 0000000010 })", format!("{:0>10.2?}", outer));
     assert_eq!("Outer(Inner { f1: ????5?????, f2: ????10???? })", format!("{:?^10.2?}", outer));
     assert_eq!("Outer(Inner { f1: 5#########, f2: 10######## })", format!("{:#<10.2?}", outer));
@@ -146,6 +150,7 @@ fn all_renamed() {
 
     assert_eq!("A(1.23456789, Inner { f1: 5, f2: 10 })", format!("{:?}", outer));
     assert_eq!("A(\n    1.23456789,\n    Inner {\n        f1: 5,\n        f2: 10,\n    },\n)", format!("{:#?}", outer));
+    assert_eq!("A(0000001.23, Inner { f1: 0000000005, f2: 0000000010 })", format!("{:010.2?}", outer));
     assert_eq!("A(0000001.23, Inner { f1: 0000000005, f2: 0000000010 })", format!("{:0>10.2?}", outer));
     assert_eq!("A(???1.23???, Inner { f1: ????5?????, f2: ????10???? })", format!("{:?^10.2?}", outer));
     assert_eq!("A(1.23######, Inner { f1: 5#########, f2: 10######## })", format!("{:#<10.2?}", outer));
@@ -182,6 +187,7 @@ fn custom_fmt() {
 
     assert_eq!("Outer(number, Inner { f1: 5, f2: 10 }, Hi)", format!("{:?}", outer));
     assert_eq!("Outer(\n    number,\n    Inner {\n        f1: 5,\n        f2: 10,\n    },\n    Hi,\n)", format!("{:#?}", outer));
+    assert_eq!("Outer(number, Inner { f1: 0000000005, f2: 0000000010 }, Hi)", format!("{:010.2?}", outer));
     assert_eq!("Outer(number, Inner { f1: 0000000005, f2: 0000000010 }, Hi)", format!("{:0>10.2?}", outer));
     assert_eq!("Outer(number, Inner { f1: ????5?????, f2: ????10???? }, Hi)", format!("{:?^10.2?}", outer));
     assert_eq!("Outer(number, Inner { f1: 5#########, f2: 10######## }, Hi)", format!("{:#<10.2?}", outer));
@@ -211,6 +217,7 @@ fn additional_fields() {
 
     assert_eq!("Outer(1.23456789, Inner { f1: 5, f2: 10 }, Hi)", format!("{:?}", outer));
     assert_eq!("Outer(\n    1.23456789,\n    Inner {\n        f1: 5,\n        f2: 10,\n    },\n    Hi,\n)", format!("{:#?}", outer));
+    assert_eq!("Outer(0000001.23, Inner { f1: 0000000005, f2: 0000000010 }, Hi)", format!("{:010.2?}", outer));
     assert_eq!("Outer(0000001.23, Inner { f1: 0000000005, f2: 0000000010 }, Hi)", format!("{:0>10.2?}", outer));
     assert_eq!("Outer(???1.23???, Inner { f1: ????5?????, f2: ????10???? }, Hi)", format!("{:?^10.2?}", outer));
     assert_eq!("Outer(1.23######, Inner { f1: 5#########, f2: 10######## }, Hi)", format!("{:#<10.2?}", outer));
@@ -247,6 +254,7 @@ fn fake_tuple_struct() {
 
     assert_eq!("Outer(1.23456789)", format!("{:?}", outer));
     assert_eq!("Outer(\n    1.23456789,\n)", format!("{:#?}", outer));
+    assert_eq!("Outer(0000001.23)", format!("{:010.2?}", outer));
     assert_eq!("Outer(0000001.23)", format!("{:0>10.2?}", outer));
     assert_eq!("Outer(???1.23???)", format!("{:?^10.2?}", outer));
     assert_eq!("Outer(1.23######)", format!("{:#<10.2?}", outer));
