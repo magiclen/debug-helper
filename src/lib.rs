@@ -311,90 +311,174 @@ use alloc::string::ToString;
 #[doc(hidden)]
 pub fn pad(t: &impl Debug, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
     if f.alternate() {
-        let s = if let Some(width) = f.width() {
-            // TODO Not to use replace.
+        // TODO Not to handle this by ourselves.
 
-            let s = if f.sign_plus() {
-                if let Some(precision) = f.precision() {
-                    match f.align().unwrap_or(Alignment::Left) {
-                        Alignment::Left => {
-                            format!("{:\x7F<+#width$.precision$?}", t, width = width, precision = precision)
+        let s = if let Some(width) = f.width() {
+            if f.sign_aware_zero_pad() {
+                if f.sign_plus() {
+                    if let Some(precision) = f.precision() {
+                        match f.align().unwrap_or(Alignment::Left) {
+                            Alignment::Left => {
+                                format!("{:<+#0width$.precision$?}", t, width = width, precision = precision)
+                            }
+                            Alignment::Right => {
+                                format!("{:>+#0width$.precision$?}", t, width = width, precision = precision)
+                            }
+                            Alignment::Center => {
+                                format!("{:^+#0width$.precision$?}", t, width = width, precision = precision)
+                            }
                         }
-                        Alignment::Right => {
-                            format!("{:\x7F>+#width$.precision$?}", t, width = width, precision = precision)
+                    } else {
+                        match f.align().unwrap_or(Alignment::Left) {
+                            Alignment::Left => {
+                                format!("{:<+#0width$?}", t, width = width)
+                            }
+                            Alignment::Right => {
+                                format!("{:>+#0width$?}", t, width = width)
+                            }
+                            Alignment::Center => {
+                                format!("{:^+#0width$?}", t, width = width)
+                            }
                         }
-                        Alignment::Center => {
-                            format!("{:\x7F^+#width$.precision$?}", t, width = width, precision = precision)
+                    }
+                } else if f.sign_minus() {
+                    if let Some(precision) = f.precision() {
+                        match f.align().unwrap_or(Alignment::Left) {
+                            Alignment::Left => {
+                                format!("{:<-#0width$.precision$?}", t, width = width, precision = precision)
+                            }
+                            Alignment::Right => {
+                                format!("{:>-#0width$.precision$?}", t, width = width, precision = precision)
+                            }
+                            Alignment::Center => {
+                                format!("{:^-#0width$.precision$?}", t, width = width, precision = precision)
+                            }
+                        }
+                    } else {
+                        match f.align().unwrap_or(Alignment::Left) {
+                            Alignment::Left => {
+                                format!("{:<-#0width$?}", t, width = width)
+                            }
+                            Alignment::Right => {
+                                format!("{:>-#0width$?}", t, width = width)
+                            }
+                            Alignment::Center => {
+                                format!("{:^-#0width$?}", t, width = width)
+                            }
                         }
                     }
                 } else {
-                    match f.align().unwrap_or(Alignment::Left) {
-                        Alignment::Left => {
-                            format!("{:\x7F<+#width$?}", t, width = width)
+                    if let Some(precision) = f.precision() {
+                        match f.align().unwrap_or(Alignment::Left) {
+                            Alignment::Left => {
+                                format!("{:<#0width$.precision$?}", t, width = width, precision = precision)
+                            }
+                            Alignment::Right => {
+                                format!("{:>#0width$.precision$?}", t, width = width, precision = precision)
+                            }
+                            Alignment::Center => {
+                                format!("{:^#0width$.precision$?}", t, width = width, precision = precision)
+                            }
                         }
-                        Alignment::Right => {
-                            format!("{:\x7F>+#width$?}", t, width = width)
-                        }
-                        Alignment::Center => {
-                            format!("{:\x7F^+#width$?}", t, width = width)
-                        }
-                    }
-                }
-            } else if f.sign_minus() {
-                if let Some(precision) = f.precision() {
-                    match f.align().unwrap_or(Alignment::Left) {
-                        Alignment::Left => {
-                            format!("{:\x7F<-#width$.precision$?}", t, width = width, precision = precision)
-                        }
-                        Alignment::Right => {
-                            format!("{:\x7F>-#width$.precision$?}", t, width = width, precision = precision)
-                        }
-                        Alignment::Center => {
-                            format!("{:\x7F^-#width$.precision$?}", t, width = width, precision = precision)
-                        }
-                    }
-                } else {
-                    match f.align().unwrap_or(Alignment::Left) {
-                        Alignment::Left => {
-                            format!("{:\x7F<-#width$?}", t, width = width)
-                        }
-                        Alignment::Right => {
-                            format!("{:\x7F>-#width$?}", t, width = width)
-                        }
-                        Alignment::Center => {
-                            format!("{:\x7F^-#width$?}", t, width = width)
+                    } else {
+                        match f.align().unwrap_or(Alignment::Left) {
+                            Alignment::Left => {
+                                format!("{:<#0width$?}", t, width = width)
+                            }
+                            Alignment::Right => {
+                                format!("{:>#0width$?}", t, width = width)
+                            }
+                            Alignment::Center => {
+                                format!("{:^#0width$?}", t, width = width)
+                            }
                         }
                     }
                 }
             } else {
-                if let Some(precision) = f.precision() {
-                    match f.align().unwrap_or(Alignment::Left) {
-                        Alignment::Left => {
-                            format!("{:\x7F<#width$.precision$?}", t, width = width, precision = precision)
+                // TODO Not to replace \x7F.
+
+                let s = if f.sign_plus() {
+                    if let Some(precision) = f.precision() {
+                        match f.align().unwrap_or(Alignment::Left) {
+                            Alignment::Left => {
+                                format!("{:\x7F<+#width$.precision$?}", t, width = width, precision = precision)
+                            }
+                            Alignment::Right => {
+                                format!("{:\x7F>+#width$.precision$?}", t, width = width, precision = precision)
+                            }
+                            Alignment::Center => {
+                                format!("{:\x7F^+#width$.precision$?}", t, width = width, precision = precision)
+                            }
                         }
-                        Alignment::Right => {
-                            format!("{:\x7F>#width$.precision$?}", t, width = width, precision = precision)
+                    } else {
+                        match f.align().unwrap_or(Alignment::Left) {
+                            Alignment::Left => {
+                                format!("{:\x7F<+#width$?}", t, width = width)
+                            }
+                            Alignment::Right => {
+                                format!("{:\x7F>+#width$?}", t, width = width)
+                            }
+                            Alignment::Center => {
+                                format!("{:\x7F^+#width$?}", t, width = width)
+                            }
                         }
-                        Alignment::Center => {
-                            format!("{:\x7F^#width$.precision$?}", t, width = width, precision = precision)
+                    }
+                } else if f.sign_minus() {
+                    if let Some(precision) = f.precision() {
+                        match f.align().unwrap_or(Alignment::Left) {
+                            Alignment::Left => {
+                                format!("{:\x7F<-#width$.precision$?}", t, width = width, precision = precision)
+                            }
+                            Alignment::Right => {
+                                format!("{:\x7F>-#width$.precision$?}", t, width = width, precision = precision)
+                            }
+                            Alignment::Center => {
+                                format!("{:\x7F^-#width$.precision$?}", t, width = width, precision = precision)
+                            }
+                        }
+                    } else {
+                        match f.align().unwrap_or(Alignment::Left) {
+                            Alignment::Left => {
+                                format!("{:\x7F<-#width$?}", t, width = width)
+                            }
+                            Alignment::Right => {
+                                format!("{:\x7F>-#width$?}", t, width = width)
+                            }
+                            Alignment::Center => {
+                                format!("{:\x7F^-#width$?}", t, width = width)
+                            }
                         }
                     }
                 } else {
-                    match f.align().unwrap_or(Alignment::Left) {
-                        Alignment::Left => {
-                            format!("{:\x7F<#width$?}", t, width = width)
+                    if let Some(precision) = f.precision() {
+                        match f.align().unwrap_or(Alignment::Left) {
+                            Alignment::Left => {
+                                format!("{:\x7F<#width$.precision$?}", t, width = width, precision = precision)
+                            }
+                            Alignment::Right => {
+                                format!("{:\x7F>#width$.precision$?}", t, width = width, precision = precision)
+                            }
+                            Alignment::Center => {
+                                format!("{:\x7F^#width$.precision$?}", t, width = width, precision = precision)
+                            }
                         }
-                        Alignment::Right => {
-                            format!("{:\x7F>#width$?}", t, width = width)
-                        }
-                        Alignment::Center => {
-                            format!("{:\x7F^#width$?}", t, width = width)
+                    } else {
+                        match f.align().unwrap_or(Alignment::Left) {
+                            Alignment::Left => {
+                                format!("{:\x7F<#width$?}", t, width = width)
+                            }
+                            Alignment::Right => {
+                                format!("{:\x7F>#width$?}", t, width = width)
+                            }
+                            Alignment::Center => {
+                                format!("{:\x7F^#width$?}", t, width = width)
+                            }
                         }
                     }
-                }
-            };
+                };
 
-            s.replace("\x7F", &f.fill().to_string())
+                s.replace("\x7F", &f.fill().to_string())
+            }
         } else {
             if f.sign_plus() {
                 if let Some(precision) = f.precision() {
