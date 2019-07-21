@@ -35,6 +35,36 @@ fn unit() {
 
 #[test]
 #[allow(dead_code)]
+fn unit_renamed() {
+    #[derive(Debug)]
+    struct Inner {
+        f1: u8,
+        f2: u8,
+    }
+
+    struct Outer(f64, Inner);
+
+    impl Debug for Outer {
+        fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
+            impl_debug_for_tuple_struct!(A, f, self);
+        }
+    }
+
+    let outer = Outer(1.23456789, Inner {
+        f1: 5,
+        f2: 10,
+    });
+
+    assert_eq!("A", format!("{:?}", outer));
+    assert_eq!("A", format!("{:#?}", outer));
+    assert_eq!("A", format!("{:0>10.2?}", outer));
+    assert_eq!("A", format!("{:?^10.2?}", outer));
+    assert_eq!("A", format!("{:#<10.2?}", outer));
+    assert_eq!("A", format!("{:#<#10.2?}", outer));
+}
+
+#[test]
+#[allow(dead_code)]
 fn one_field_primitive() {
     #[derive(Debug)]
     struct Inner {
@@ -94,7 +124,7 @@ fn one_field_nested() {
 }
 
 #[test]
-fn all() {
+fn all_renamed() {
     #[derive(Debug)]
     struct Inner {
         f1: u8,
@@ -105,7 +135,7 @@ fn all() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_tuple_struct!(Outer, f, self, .0, .1);
+            impl_debug_for_tuple_struct!(A, f, self, .0, .1);
         }
     }
 
@@ -114,12 +144,12 @@ fn all() {
         f2: 10,
     });
 
-    assert_eq!("Outer(1.23456789, Inner { f1: 5, f2: 10 })", format!("{:?}", outer));
-    assert_eq!("Outer(\n    1.23456789,\n    Inner {\n        f1: 5,\n        f2: 10,\n    },\n)", format!("{:#?}", outer));
-    assert_eq!("Outer(0000001.23, Inner { f1: 0000000005, f2: 0000000010 })", format!("{:0>10.2?}", outer));
-    assert_eq!("Outer(???1.23???, Inner { f1: ????5?????, f2: ????10???? })", format!("{:?^10.2?}", outer));
-    assert_eq!("Outer(1.23######, Inner { f1: 5#########, f2: 10######## })", format!("{:#<10.2?}", outer));
-    assert_eq!("Outer(\n    1.23######,\n    Inner {\n        f1: 5#########,\n        f2: 10########,\n    },\n)", format!("{:#<#10.2?}", outer));
+    assert_eq!("A(1.23456789, Inner { f1: 5, f2: 10 })", format!("{:?}", outer));
+    assert_eq!("A(\n    1.23456789,\n    Inner {\n        f1: 5,\n        f2: 10,\n    },\n)", format!("{:#?}", outer));
+    assert_eq!("A(0000001.23, Inner { f1: 0000000005, f2: 0000000010 })", format!("{:0>10.2?}", outer));
+    assert_eq!("A(???1.23???, Inner { f1: ????5?????, f2: ????10???? })", format!("{:?^10.2?}", outer));
+    assert_eq!("A(1.23######, Inner { f1: 5#########, f2: 10######## })", format!("{:#<10.2?}", outer));
+    assert_eq!("A(\n    1.23######,\n    Inner {\n        f1: 5#########,\n        f2: 10########,\n    },\n)", format!("{:#<#10.2?}", outer));
 }
 
 #[test]

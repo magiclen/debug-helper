@@ -69,7 +69,7 @@ println!("{:#?}", a);
 */
 ```
 
-For enums,
+For enums (without the enum name),
 
 ```rust
 #[macro_use] extern crate debug_helper;
@@ -116,6 +116,56 @@ println!("{:#?}", c);
     }
 */
 ```
+
+For enums (with the enum name),
+
+```rust
+#[macro_use] extern crate debug_helper;
+
+use std::fmt::{self, Formatter, Debug};
+
+pub enum A {
+    V1,
+    V2(u8, i16, f64),
+    V3 {
+        f1: u8,
+        f2: i16,
+        f3: f64,
+    },
+}
+
+impl Debug for A {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
+        impl_debug_for_enum!({A::V1, (V2(f1, _, f3): (.f1, (.f3, "{:.3}", f3))), {V3{f1, f2: _, f3}: (.f1, (.f3, "{:.3}", f3))}}, f, self);
+    }
+}
+
+let a = A::V1;
+let b = A::V2(1, 2, std::f64::consts::PI);
+let c = A::V3{
+    f1: 1,
+    f2: 2,
+    f3: std::f64::consts::PI,
+};
+
+println!("{:#?}", a);
+println!("{:#?}", b);
+println!("{:#?}", c);
+
+/*
+    A::V1
+    A::V2(
+        1,
+        3.142,
+    )
+    A::V3 {
+        f1: 1,
+        f3: 3.142,
+    }
+*/
+```
+
+
 
 Ghost fields,
 
@@ -247,7 +297,6 @@ println!("{:#?}", a);
 
 1. Fake enum struct variants and tuple variants.
 1. Enum variants can be renamed.
-1. Fake enum variants.
 
 */
 
@@ -265,38 +314,106 @@ pub fn pad(t: &impl Debug, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
         let s = if let Some(width) = f.width() {
             // TODO Not to use replace.
 
-            let s = if let Some(precision) = f.precision() {
-                match f.align().unwrap_or(Alignment::Left) {
-                    Alignment::Left => {
-                        format!("{:\x7F<#width$.precision$?}", t, width = width, precision = precision)
+            let s = if f.sign_plus() {
+                if let Some(precision) = f.precision() {
+                    match f.align().unwrap_or(Alignment::Left) {
+                        Alignment::Left => {
+                            format!("{:\x7F<+#width$.precision$?}", t, width = width, precision = precision)
+                        }
+                        Alignment::Right => {
+                            format!("{:\x7F>+#width$.precision$?}", t, width = width, precision = precision)
+                        }
+                        Alignment::Center => {
+                            format!("{:\x7F^+#width$.precision$?}", t, width = width, precision = precision)
+                        }
                     }
-                    Alignment::Right => {
-                        format!("{:\x7F>#width$.precision$?}", t, width = width, precision = precision)
+                } else {
+                    match f.align().unwrap_or(Alignment::Left) {
+                        Alignment::Left => {
+                            format!("{:\x7F<+#width$?}", t, width = width)
+                        }
+                        Alignment::Right => {
+                            format!("{:\x7F>+#width$?}", t, width = width)
+                        }
+                        Alignment::Center => {
+                            format!("{:\x7F^+#width$?}", t, width = width)
+                        }
                     }
-                    Alignment::Center => {
-                        format!("{:\x7F^#width$.precision$?}", t, width = width, precision = precision)
+                }
+            } else if f.sign_minus() {
+                if let Some(precision) = f.precision() {
+                    match f.align().unwrap_or(Alignment::Left) {
+                        Alignment::Left => {
+                            format!("{:\x7F<-#width$.precision$?}", t, width = width, precision = precision)
+                        }
+                        Alignment::Right => {
+                            format!("{:\x7F>-#width$.precision$?}", t, width = width, precision = precision)
+                        }
+                        Alignment::Center => {
+                            format!("{:\x7F^-#width$.precision$?}", t, width = width, precision = precision)
+                        }
+                    }
+                } else {
+                    match f.align().unwrap_or(Alignment::Left) {
+                        Alignment::Left => {
+                            format!("{:\x7F<-#width$?}", t, width = width)
+                        }
+                        Alignment::Right => {
+                            format!("{:\x7F>-#width$?}", t, width = width)
+                        }
+                        Alignment::Center => {
+                            format!("{:\x7F^-#width$?}", t, width = width)
+                        }
                     }
                 }
             } else {
-                match f.align().unwrap_or(Alignment::Left) {
-                    Alignment::Left => {
-                        format!("{:\x7F<#width$?}", t, width = width)
+                if let Some(precision) = f.precision() {
+                    match f.align().unwrap_or(Alignment::Left) {
+                        Alignment::Left => {
+                            format!("{:\x7F<#width$.precision$?}", t, width = width, precision = precision)
+                        }
+                        Alignment::Right => {
+                            format!("{:\x7F>#width$.precision$?}", t, width = width, precision = precision)
+                        }
+                        Alignment::Center => {
+                            format!("{:\x7F^#width$.precision$?}", t, width = width, precision = precision)
+                        }
                     }
-                    Alignment::Right => {
-                        format!("{:\x7F>#width$?}", t, width = width)
-                    }
-                    Alignment::Center => {
-                        format!("{:\x7F^#width$?}", t, width = width)
+                } else {
+                    match f.align().unwrap_or(Alignment::Left) {
+                        Alignment::Left => {
+                            format!("{:\x7F<#width$?}", t, width = width)
+                        }
+                        Alignment::Right => {
+                            format!("{:\x7F>#width$?}", t, width = width)
+                        }
+                        Alignment::Center => {
+                            format!("{:\x7F^#width$?}", t, width = width)
+                        }
                     }
                 }
             };
 
             s.replace("\x7F", &f.fill().to_string())
         } else {
-            if let Some(precision) = f.precision() {
-                format!("{:#.precision$?}", t, precision = precision)
+            if f.sign_plus() {
+                if let Some(precision) = f.precision() {
+                    format!("{:+#.precision$?}", t, precision = precision)
+                } else {
+                    format!("{:+#?}", t)
+                }
+            } else if f.sign_minus() {
+                if let Some(precision) = f.precision() {
+                    format!("{:-#.precision$?}", t, precision = precision)
+                } else {
+                    format!("{:-#?}", t)
+                }
             } else {
-                format!("{:#?}", t)
+                if let Some(precision) = f.precision() {
+                    format!("{:#.precision$?}", t, precision = precision)
+                } else {
+                    format!("{:#?}", t)
+                }
             }
         };
 
@@ -308,9 +425,11 @@ pub fn pad(t: &impl Debug, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
 
 #[macro_export]
 macro_rules! impl_debug_for_struct {
+    // TODO unit struct
     ($struct_name:ident, $formatter:expr $(, $self:expr)? $(,)*) => {
         return $formatter.write_str(stringify!($struct_name));
     };
+    // TODO struct
     ($struct_name:ident, $formatter:expr, $self:expr, $(.$first_field:ident)? $((.$first_field_2:ident, $($first_field_2_fmt:tt)+))? $(let .$first_field_3:ident = $first_field_3_value:expr)? $(, $(.$field:ident)? $((.$field_2:ident, $($field_2_fmt:tt)+))? $(let .$field_3:ident = $field_3_value:expr)?)* $(,)*) => {
         {
             use $crate::alloc::fmt::Write;
@@ -413,9 +532,11 @@ macro_rules! impl_debug_for_struct {
 
 #[macro_export]
 macro_rules! impl_debug_for_tuple_struct {
+    // TODO unit tuple struct
     ($struct_name:ident, $formatter:expr $(, $self:expr)? $(,)*) => {
         return $formatter.write_str(stringify!($struct_name));
     };
+    // TODO tuple struct
     ($struct_name:ident, $formatter:expr, $self:expr, $(.$first_field:tt)? $((.$first_field_2:tt, $($first_field_2_fmt:tt)+))? $(let .$first_field_3:tt = $first_field_3_value:expr)? $(, $(.$field:tt)? $((.$field_2:tt, $($field_2_fmt:tt)+))? $(let .$field_3:tt = $field_3_value:expr)?)* $(,)*) => {
         {
             use $crate::alloc::fmt::Write;
@@ -501,6 +622,7 @@ macro_rules! impl_debug_for_tuple_struct {
 
 #[macro_export]
 macro_rules! impl_debug_for_enum {
+    // TODO enum
     ($enum_name:ident::{$( $($variant_unit:ident)? $(($variant_tuple:ident ($($tuple:tt)*) $(:($(.$t_first_field:tt)? $((.$t_first_field_2:tt, $($t_first_field_2_fmt:tt)+))? $(let .$t_first_field_3:tt = $t_first_field_3_value:expr)? $(, $(.$t_field:tt)? $((.$t_field_2:tt, $($t_field_2_fmt:tt)+))? $(let .$t_field_3:tt = $t_field_3_value:expr)?)* $(,)*))? ) )? $({$variant_struct:ident {$($struct:tt)*} $(:($(.$s_first_field:tt)? $((.$s_first_field_2:tt, $($s_first_field_2_fmt:tt)+))? $(let .$s_first_field_3:ident = $s_first_field_3_value:expr)? $(, $(.$s_field:tt)? $((.$s_field_2:tt, $($s_field_2_fmt:tt)+))? $(let .$s_field_3:ident = $s_field_3_value:expr)?)* $(,)*))? })? ),+ $(,)*}, $formatter:expr, $self:expr $(,)*) => {
         {
             use $crate::alloc::fmt::Write;
@@ -693,6 +815,211 @@ macro_rules! impl_debug_for_enum {
                             )?
 
                             return result;
+                        }
+                    )?
+                )+
+            }
+        }
+    };
+    // TODO enum full path
+    ({$enum_name:ident::$( $($variant_unit:ident)? $(($variant_tuple:ident ($($tuple:tt)*) $(:($(.$t_first_field:tt)? $((.$t_first_field_2:tt, $($t_first_field_2_fmt:tt)+))? $(let .$t_first_field_3:tt = $t_first_field_3_value:expr)? $(, $(.$t_field:tt)? $((.$t_field_2:tt, $($t_field_2_fmt:tt)+))? $(let .$t_field_3:tt = $t_field_3_value:expr)?)* $(,)*))? ) )? $({$variant_struct:ident {$($struct:tt)*} $(:($(.$s_first_field:tt)? $((.$s_first_field_2:tt, $($s_first_field_2_fmt:tt)+))? $(let .$s_first_field_3:ident = $s_first_field_3_value:expr)? $(, $(.$s_field:tt)? $((.$s_field_2:tt, $($s_field_2_fmt:tt)+))? $(let .$s_field_3:ident = $s_field_3_value:expr)?)* $(,)*))? })? ),+ $(,)*}, $formatter:expr, $self:expr $(,)*) => {
+        {
+            use $crate::alloc::fmt::Write;
+
+            match $self {
+                $(
+                    $(
+                        Self::$variant_unit => {
+                            $formatter.write_str(stringify!($enum_name))?;
+                            $formatter.write_str("::")?;
+                            return $formatter.write_str(stringify!($variant_unit));
+                        }
+                    )?
+                    $(
+                        Self::$variant_tuple ($($tuple)*)=> {
+                            $formatter.write_str(stringify!($enum_name))?;
+                            $formatter.write_str("::")?;
+                            $formatter.write_str(stringify!($variant_tuple))?;
+
+                            $(
+                                let separator = if $formatter.alternate() {
+                                    $formatter.write_str("(\n    ")?;
+
+                                    "\n    "
+                                } else {
+                                    $formatter.write_str("(")?;
+
+                                    ", "
+                                };
+
+                                $(
+                                    $crate::pad(&$t_first_field, $formatter)?;
+
+                                    if $formatter.alternate() {
+                                        $formatter.write_char(',')?;
+                                    }
+                                )?
+
+                                $(
+                                    if $formatter.alternate() {
+                                        $formatter.write_str(&format!($($t_first_field_2_fmt)*).replace("\n", "\n    "))?;
+
+                                        $formatter.write_char(',')?;
+                                    } else {
+                                        $formatter.write_fmt(format_args!($($t_first_field_2_fmt)*))?;
+                                    }
+                                )?
+
+                                $(
+                                    $crate::pad(&$t_first_field_3_value, $formatter)?;
+
+                                    if $formatter.alternate() {
+                                        $formatter.write_char(',')?;
+                                    }
+                                )?
+
+                                $(
+                                    $(
+                                        $formatter.write_str(separator)?;
+                                        $crate::pad(&$t_field, $formatter)?;
+
+                                        if $formatter.alternate() {
+                                            $formatter.write_char(',')?;
+                                        }
+                                    )?
+
+                                    $(
+                                        $formatter.write_str(separator)?;
+
+                                        if $formatter.alternate() {
+                                            $formatter.write_str(&format!($($t_field_2_fmt)*).replace("\n", "\n    "))?;
+
+                                            $formatter.write_char(',')?;
+                                        } else {
+                                            $formatter.write_fmt(format_args!($($t_field_2_fmt)*))?;
+                                        }
+                                    )?
+
+                                    $(
+                                        $formatter.write_str(separator)?;
+                                        $crate::pad(&$t_field_3_value, $formatter)?;
+
+                                        if $formatter.alternate() {
+                                            $formatter.write_char(',')?;
+                                        }
+                                    )?
+                                )*
+
+                                if $formatter.alternate() {
+                                    $formatter.write_str("\n)")?;
+                                } else {
+                                    $formatter.write_str(")")?;
+                                }
+                            )?
+
+                            return Ok(());
+                        }
+                    )?
+                    $(
+                        Self::$variant_struct {$($struct)*}=> {
+                            $formatter.write_str(stringify!($enum_name))?;
+                            $formatter.write_str("::")?;
+                            $formatter.write_str(stringify!($variant_struct))?;
+
+                            $(
+                                let separator = if $formatter.alternate() {
+                                    $formatter.write_str(" {\n    ")?;
+
+                                    "\n    "
+                                } else {
+                                    $formatter.write_str(" { ")?;
+
+                                    ", "
+                                };
+
+                                $(
+                                    $formatter.write_str(stringify!($s_first_field))?;
+                                    $formatter.write_str(": ")?;
+
+                                    $crate::pad(&$s_first_field, $formatter)?;
+
+                                    if $formatter.alternate() {
+                                        $formatter.write_char(',')?;
+                                    }
+                                )?
+
+                                $(
+                                    $formatter.write_str(stringify!($s_first_field_2))?;
+                                    $formatter.write_str(": ")?;
+
+                                    if $formatter.alternate() {
+                                        $formatter.write_str(&format!($($s_first_field_2_fmt)*).replace("\n", "\n    "))?;
+
+                                        $formatter.write_char(',')?;
+                                    } else {
+                                        $formatter.write_fmt(format_args!($($s_first_field_2_fmt)*))?;
+                                    }
+                                )?
+
+                                $(
+                                    $formatter.write_str(stringify!($s_first_field_3))?;
+                                    $formatter.write_str(": ")?;
+
+                                    $crate::pad(&$s_first_field_3_value, $formatter)?;
+
+                                    if $formatter.alternate() {
+                                        $formatter.write_char(',')?;
+                                    }
+                                )?
+
+                                $(
+                                    $(
+                                        $formatter.write_str(separator)?;
+                                        $formatter.write_str(stringify!($s_field))?;
+                                        $formatter.write_str(": ")?;
+
+                                        $crate::pad(&$s_field, $formatter)?;
+
+                                        if $formatter.alternate() {
+                                            $formatter.write_char(',')?;
+                                        }
+                                    )?
+
+                                    $(
+                                        $formatter.write_str(separator)?;
+                                        $formatter.write_str(stringify!($s_field_2))?;
+                                        $formatter.write_str(": ")?;
+
+                                        if $formatter.alternate() {
+                                            $formatter.write_str(&format!($($s_field_2_fmt)*).replace("\n", "\n    "))?;
+
+                                            $formatter.write_char(',')?;
+                                        } else {
+                                            $formatter.write_fmt(format_args!($($s_field_2_fmt)*))?;
+                                        }
+                                    )?
+
+                                    $(
+                                        $formatter.write_str(separator)?;
+                                        $formatter.write_str(stringify!($s_field_3))?;
+                                        $formatter.write_str(": ")?;
+
+                                        $crate::pad(&$s_field_3_value, $formatter)?;
+
+                                        if $formatter.alternate() {
+                                            $formatter.write_char(',')?;
+                                        }
+                                    )?
+                                )*
+
+                                if $formatter.alternate() {
+                                    $formatter.write_str("\n}")?;
+                                } else {
+                                    $formatter.write_str(" }")?;
+                                }
+                            )?
+
+                            return Ok(());
                         }
                     )?
                 )+
