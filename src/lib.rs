@@ -302,358 +302,17 @@ println!("{:#?}", a);
 
 #![no_std]
 
-#[macro_use(format)]
-pub extern crate alloc;
+extern crate alloc;
 
-use alloc::fmt::{self, Formatter, Alignment, Debug};
-use alloc::string::ToString;
+use alloc::fmt::{Formatter, Result as FormatResult, Debug};
+use alloc::string::String;
 
 #[doc(hidden)]
-pub fn pad(t: &impl Debug, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-    if f.alternate() {
-        // TODO Not to handle this by ourselves.
+pub struct RawString(pub String);
 
-        let s = if f.sign_aware_zero_pad() {
-            let width = f.width().unwrap();
-
-            if f.sign_plus() {
-                if let Some(precision) = f.precision() {
-                    match f.align() {
-                        Some(align) => match align {
-                            Alignment::Left => {
-                                format!("{:\x7F<+#0width$.precision$?}", t, width = width, precision = precision).replace("\x7F", &f.fill().to_string())
-                            }
-                            Alignment::Right => {
-                                format!("{:\x7F>+#0width$.precision$?}", t, width = width, precision = precision).replace("\x7F", &f.fill().to_string())
-                            }
-                            Alignment::Center => {
-                                format!("{:\x7F^+#0width$.precision$?}", t, width = width, precision = precision).replace("\x7F", &f.fill().to_string())
-                            }
-                        }
-                        None => {
-                            format!("{:+#0width$.precision$?}", t, width = width, precision = precision)
-                        }
-                    }
-                } else {
-                    match f.align() {
-                        Some(align) => match align {
-                            Alignment::Left => {
-                                format!("{:\x7F<+#0width$?}", t, width = width).replace("\x7F", &f.fill().to_string())
-                            }
-                            Alignment::Right => {
-                                format!("{:\x7F>+#0width$?}", t, width = width).replace("\x7F", &f.fill().to_string())
-                            }
-                            Alignment::Center => {
-                                format!("{:\x7F^+#0width$?}", t, width = width).replace("\x7F", &f.fill().to_string())
-                            }
-                        }
-                        None => {
-                            format!("{:+#0width$?}", t, width = width)
-                        }
-                    }
-                }
-            } else if f.sign_minus() {
-                if let Some(precision) = f.precision() {
-                    match f.align() {
-                        Some(align) => match align {
-                            Alignment::Left => {
-                                format!("{:\x7F<-#0width$.precision$?}", t, width = width, precision = precision).replace("\x7F", &f.fill().to_string())
-                            }
-                            Alignment::Right => {
-                                format!("{:\x7F>-#0width$.precision$?}", t, width = width, precision = precision).replace("\x7F", &f.fill().to_string())
-                            }
-                            Alignment::Center => {
-                                format!("{:\x7F^-#0width$.precision$?}", t, width = width, precision = precision).replace("\x7F", &f.fill().to_string())
-                            }
-                        }
-                        None => {
-                            format!("{:-#0width$.precision$?}", t, width = width, precision = precision)
-                        }
-                    }
-                } else {
-                    match f.align() {
-                        Some(align) => match align {
-                            Alignment::Left => {
-                                format!("{:\x7F<-#0width$?}", t, width = width).replace("\x7F", &f.fill().to_string())
-                            }
-                            Alignment::Right => {
-                                format!("{:\x7F>-#0width$?}", t, width = width).replace("\x7F", &f.fill().to_string())
-                            }
-                            Alignment::Center => {
-                                format!("{:\x7F^-#0width$?}", t, width = width).replace("\x7F", &f.fill().to_string())
-                            }
-                        }
-                        None => {
-                            format!("{:-#0width$?}", t, width = width)
-                        }
-                    }
-                }
-            } else {
-                if let Some(precision) = f.precision() {
-                    match f.align() {
-                        Some(align) => match align {
-                            Alignment::Left => {
-                                format!("{:\x7F<#0width$.precision$?}", t, width = width, precision = precision).replace("\x7F", &f.fill().to_string())
-                            }
-                            Alignment::Right => {
-                                format!("{:\x7F>#0width$.precision$?}", t, width = width, precision = precision).replace("\x7F", &f.fill().to_string())
-                            }
-                            Alignment::Center => {
-                                format!("{:\x7F^#0width$.precision$?}", t, width = width, precision = precision).replace("\x7F", &f.fill().to_string())
-                            }
-                        }
-                        None => {
-                            format!("{:#0width$.precision$?}", t, width = width, precision = precision)
-                        }
-                    }
-                } else {
-                    match f.align() {
-                        Some(align) => match align {
-                            Alignment::Left => {
-                                format!("{:\x7F<#0width$?}", t, width = width).replace("\x7F", &f.fill().to_string())
-                            }
-                            Alignment::Right => {
-                                format!("{:\x7F>#0width$?}", t, width = width).replace("\x7F", &f.fill().to_string())
-                            }
-                            Alignment::Center => {
-                                format!("{:\x7F^#0width$?}", t, width = width).replace("\x7F", &f.fill().to_string())
-                            }
-                        }
-                        None => {
-                            format!("{:#0width$?}", t, width = width)
-                        }
-                    }
-                }
-            }
-        } else {
-            if f.sign_plus() {
-                if let Some(width) = f.width() {
-                    if let Some(precision) = f.precision() {
-                        match f.align() {
-                            Some(align) => match align {
-                                Alignment::Left => {
-                                    format!("{:\x7F<+#width$.precision$?}", t, width = width, precision = precision).replace("\x7F", &f.fill().to_string())
-                                }
-                                Alignment::Right => {
-                                    format!("{:\x7F>+#width$.precision$?}", t, width = width, precision = precision).replace("\x7F", &f.fill().to_string())
-                                }
-                                Alignment::Center => {
-                                    format!("{:\x7F^+#width$.precision$?}", t, width = width, precision = precision).replace("\x7F", &f.fill().to_string())
-                                }
-                            }
-                            None => {
-                                format!("{:+#width$.precision$?}", t, width = width, precision = precision)
-                            }
-                        }
-                    } else {
-                        match f.align() {
-                            Some(align) => match align {
-                                Alignment::Left => {
-                                    format!("{:\x7F<+#width$?}", t, width = width).replace("\x7F", &f.fill().to_string())
-                                }
-                                Alignment::Right => {
-                                    format!("{:\x7F>+#width$?}", t, width = width).replace("\x7F", &f.fill().to_string())
-                                }
-                                Alignment::Center => {
-                                    format!("{:\x7F^+#width$?}", t, width = width).replace("\x7F", &f.fill().to_string())
-                                }
-                            }
-                            None => {
-                                format!("{:+#width$?}", t, width = width)
-                            }
-                        }
-                    }
-                } else {
-                    if let Some(precision) = f.precision() {
-                        match f.align() {
-                            Some(align) => match align {
-                                Alignment::Left => {
-                                    format!("{:\x7F<+#.precision$?}", t, precision = precision).replace("\x7F", &f.fill().to_string())
-                                }
-                                Alignment::Right => {
-                                    format!("{:\x7F>+#.precision$?}", t, precision = precision).replace("\x7F", &f.fill().to_string())
-                                }
-                                Alignment::Center => {
-                                    format!("{:\x7F^+#.precision$?}", t, precision = precision).replace("\x7F", &f.fill().to_string())
-                                }
-                            }
-                            None => {
-                                format!("{:+#.precision$?}", t, precision = precision)
-                            }
-                        }
-                    } else {
-                        match f.align() {
-                            Some(align) => match align {
-                                Alignment::Left => {
-                                    format!("{:\x7F<+#?}", t).replace("\x7F", &f.fill().to_string())
-                                }
-                                Alignment::Right => {
-                                    format!("{:\x7F>+#?}", t).replace("\x7F", &f.fill().to_string())
-                                }
-                                Alignment::Center => {
-                                    format!("{:\x7F^+#?}", t).replace("\x7F", &f.fill().to_string())
-                                }
-                            }
-                            None => {
-                                format!("{:+#?}", t)
-                            }
-                        }
-                    }
-                }
-            } else if f.sign_minus() {
-                if let Some(width) = f.width() {
-                    if let Some(precision) = f.precision() {
-                        match f.align() {
-                            Some(align) => match align {
-                                Alignment::Left => {
-                                    format!("{:\x7F<-#width$.precision$?}", t, width = width, precision = precision).replace("\x7F", &f.fill().to_string())
-                                }
-                                Alignment::Right => {
-                                    format!("{:\x7F>-#width$.precision$?}", t, width = width, precision = precision).replace("\x7F", &f.fill().to_string())
-                                }
-                                Alignment::Center => {
-                                    format!("{:\x7F^-#width$.precision$?}", t, width = width, precision = precision).replace("\x7F", &f.fill().to_string())
-                                }
-                            }
-                            None => {
-                                format!("{:-#width$.precision$?}", t, width = width, precision = precision)
-                            }
-                        }
-                    } else {
-                        match f.align() {
-                            Some(align) => match align {
-                                Alignment::Left => {
-                                    format!("{:\x7F<-#width$?}", t, width = width).replace("\x7F", &f.fill().to_string())
-                                }
-                                Alignment::Right => {
-                                    format!("{:\x7F>-#width$?}", t, width = width).replace("\x7F", &f.fill().to_string())
-                                }
-                                Alignment::Center => {
-                                    format!("{:\x7F^-#width$?}", t, width = width).replace("\x7F", &f.fill().to_string())
-                                }
-                            }
-                            None => {
-                                format!("{:-#width$?}", t, width = width)
-                            }
-                        }
-                    }
-                } else {
-                    if let Some(precision) = f.precision() {
-                        match f.align() {
-                            Some(align) => match align {
-                                Alignment::Left => {
-                                    format!("{:\x7F<-#.precision$?}", t, precision = precision).replace("\x7F", &f.fill().to_string())
-                                }
-                                Alignment::Right => {
-                                    format!("{:\x7F>-#.precision$?}", t, precision = precision).replace("\x7F", &f.fill().to_string())
-                                }
-                                Alignment::Center => {
-                                    format!("{:\x7F^-#.precision$?}", t, precision = precision).replace("\x7F", &f.fill().to_string())
-                                }
-                            }
-                            None => {
-                                format!("{:-#.precision$?}", t, precision = precision)
-                            }
-                        }
-                    } else {
-                        match f.align() {
-                            Some(align) => match align {
-                                Alignment::Left => {
-                                    format!("{:\x7F<-#?}", t).replace("\x7F", &f.fill().to_string())
-                                }
-                                Alignment::Right => {
-                                    format!("{:\x7F>-#?}", t).replace("\x7F", &f.fill().to_string())
-                                }
-                                Alignment::Center => {
-                                    format!("{:\x7F^-#?}", t).replace("\x7F", &f.fill().to_string())
-                                }
-                            }
-                            None => {
-                                format!("{:-#?}", t)
-                            }
-                        }
-                    }
-                }
-            } else {
-                if let Some(width) = f.width() {
-                    if let Some(precision) = f.precision() {
-                        match f.align() {
-                            Some(align) => match align {
-                                Alignment::Left => {
-                                    format!("{:\x7F<#width$.precision$?}", t, width = width, precision = precision).replace("\x7F", &f.fill().to_string())
-                                }
-                                Alignment::Right => {
-                                    format!("{:\x7F>#width$.precision$?}", t, width = width, precision = precision).replace("\x7F", &f.fill().to_string())
-                                }
-                                Alignment::Center => {
-                                    format!("{:\x7F^#width$.precision$?}", t, width = width, precision = precision).replace("\x7F", &f.fill().to_string())
-                                }
-                            }
-                            None => {
-                                format!("{:#width$.precision$?}", t, width = width, precision = precision)
-                            }
-                        }
-                    } else {
-                        match f.align() {
-                            Some(align) => match align {
-                                Alignment::Left => {
-                                    format!("{:\x7F<#width$?}", t, width = width).replace("\x7F", &f.fill().to_string())
-                                }
-                                Alignment::Right => {
-                                    format!("{:\x7F>#width$?}", t, width = width).replace("\x7F", &f.fill().to_string())
-                                }
-                                Alignment::Center => {
-                                    format!("{:\x7F^#width$?}", t, width = width).replace("\x7F", &f.fill().to_string())
-                                }
-                            }
-                            None => {
-                                format!("{:#width$?}", t, width = width)
-                            }
-                        }
-                    }
-                } else {
-                    if let Some(precision) = f.precision() {
-                        match f.align() {
-                            Some(align) => match align {
-                                Alignment::Left => {
-                                    format!("{:\x7F<#.precision$?}", t, precision = precision).replace("\x7F", &f.fill().to_string())
-                                }
-                                Alignment::Right => {
-                                    format!("{:\x7F>#.precision$?}", t, precision = precision).replace("\x7F", &f.fill().to_string())
-                                }
-                                Alignment::Center => {
-                                    format!("{:\x7F^#.precision$?}", t, precision = precision).replace("\x7F", &f.fill().to_string())
-                                }
-                            }
-                            None => {
-                                format!("{:#.precision$?}", t, precision = precision)
-                            }
-                        }
-                    } else {
-                        match f.align() {
-                            Some(align) => match align {
-                                Alignment::Left => {
-                                    format!("{:\x7F<#?}", t).replace("\x7F", &f.fill().to_string())
-                                }
-                                Alignment::Right => {
-                                    format!("{:\x7F>#?}", t).replace("\x7F", &f.fill().to_string())
-                                }
-                                Alignment::Center => {
-                                    format!("{:\x7F^#?}", t).replace("\x7F", &f.fill().to_string())
-                                }
-                            }
-                            None => {
-                                format!("{:#?}", t)
-                            }
-                        }
-                    }
-                }
-            }
-        };
-
-        f.write_str(&s.replace("\n", "\n    "))
-    } else {
-        Debug::fmt(t, f)
+impl Debug for RawString {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FormatResult {
+        f.write_str(self.0.as_str())
     }
 }
 
@@ -664,102 +323,31 @@ macro_rules! impl_debug_for_struct {
         return $formatter.write_str(stringify!($struct_name));
     };
     // TODO struct
-    ($struct_name:ident, $formatter:expr, $self:expr, $(.$first_field:ident)? $((.$first_field_2:ident, $($first_field_2_fmt:tt)+))? $(let .$first_field_3:ident = $first_field_3_value:expr)? $(, $(.$field:ident)? $((.$field_2:ident, $($field_2_fmt:tt)+))? $(let .$field_3:ident = $field_3_value:expr)?)* $(,)*) => {
+    ($struct_name:ident, $formatter:expr, $self:expr, $( $(.$field:ident)? $((.$field_2:ident, $($field_2_fmt:tt)+))? $(let .$field_3:ident = $field_3_value:expr)? ),* $(,)*) => {
         {
-            use $crate::alloc::fmt::Write;
+            let _alternate = $formatter.alternate();
 
-            $formatter.write_str(stringify!($struct_name))?;
-
-            let separator = if $formatter.alternate() {
-                $formatter.write_str(" {\n    ")?;
-
-                "\n    "
-            } else {
-                $formatter.write_str(" { ")?;
-
-                ", "
-            };
-
-            $(
-                $formatter.write_str(stringify!($first_field))?;
-                $formatter.write_str(": ")?;
-
-                $crate::pad(&$self.$first_field, $formatter)?;
-
-                if $formatter.alternate() {
-                    $formatter.write_char(',')?;
-                }
-            )?
-
-            $(
-                $formatter.write_str(stringify!($first_field_2))?;
-                $formatter.write_str(": ")?;
-
-                if $formatter.alternate() {
-                    $formatter.write_str(&format!($($first_field_2_fmt)*).replace("\n", "\n    "))?;
-
-                    $formatter.write_char(',')?;
-                } else {
-                    $formatter.write_fmt(format_args!($($first_field_2_fmt)*))?;
-                }
-            )?
-
-            $(
-                $formatter.write_str(stringify!($first_field_3))?;
-                $formatter.write_str(": ")?;
-
-                $crate::pad(&$first_field_3_value, $formatter)?;
-
-                if $formatter.alternate() {
-                    $formatter.write_char(',')?;
-                }
-            )?
+            let mut builder = $formatter.debug_struct(stringify!($struct_name));
 
             $(
                 $(
-                    $formatter.write_str(separator)?;
-                    $formatter.write_str(stringify!($field))?;
-                    $formatter.write_str(": ")?;
-
-                    $crate::pad(&$self.$field, $formatter)?;
-
-                    if $formatter.alternate() {
-                        $formatter.write_char(',')?;
-                    }
+                    builder.field(stringify!($field), &$self.$field);
                 )?
 
                 $(
-                    $formatter.write_str(separator)?;
-                    $formatter.write_str(stringify!($field_2))?;
-                    $formatter.write_str(": ")?;
-
-                    if $formatter.alternate() {
-                        $formatter.write_str(&format!($($field_2_fmt)*).replace("\n", "\n    "))?;
-
-                        $formatter.write_char(',')?;
+                    builder.field(stringify!($field_2), &if _alternate {
+                        $crate::RawString(format!($($field_2_fmt)*).replace("\n", "\n    "))
                     } else {
-                        $formatter.write_fmt(format_args!($($field_2_fmt)*))?;
-                    }
+                        $crate::RawString(format!($($field_2_fmt)*))
+                    });
                 )?
 
                 $(
-                    $formatter.write_str(separator)?;
-                    $formatter.write_str(stringify!($field_3))?;
-                    $formatter.write_str(": ")?;
-
-                    $crate::pad(&$field_3_value, $formatter)?;
-
-                    if $formatter.alternate() {
-                        $formatter.write_char(',')?;
-                    }
+                    builder.field(stringify!($field_3), &$field_3_value);
                 )?
             )*
 
-            if $formatter.alternate() {
-                return $formatter.write_str("\n}");
-            } else {
-                return $formatter.write_str(" }");
-            }
+            return builder.finish();
         }
     };
 }
@@ -771,85 +359,31 @@ macro_rules! impl_debug_for_tuple_struct {
         return $formatter.write_str(stringify!($struct_name));
     };
     // TODO tuple struct
-    ($struct_name:ident, $formatter:expr, $self:expr, $(.$first_field:tt)? $((.$first_field_2:tt, $($first_field_2_fmt:tt)+))? $(let .$first_field_3:tt = $first_field_3_value:expr)? $(, $(.$field:tt)? $((.$field_2:tt, $($field_2_fmt:tt)+))? $(let .$field_3:tt = $field_3_value:expr)?)* $(,)*) => {
+    ($struct_name:ident, $formatter:expr, $self:expr, $( $(.$field:tt)? $((.$field_2:tt, $($field_2_fmt:tt)+))? $(let .$field_3:tt = $field_3_value:expr)? ),* $(,)*) => {
         {
-            use $crate::alloc::fmt::Write;
+            let _alternate = $formatter.alternate();
 
-            $formatter.write_str(stringify!($struct_name))?;
-
-            let separator = if $formatter.alternate() {
-                $formatter.write_str("(\n    ")?;
-
-                "\n    "
-            } else {
-                $formatter.write_str("(")?;
-
-                ", "
-            };
-
-            $(
-                $crate::pad(&$self.$first_field, $formatter)?;
-
-                if $formatter.alternate() {
-                    $formatter.write_char(',')?;
-                }
-            )?
-
-            $(
-                if $formatter.alternate() {
-                    $formatter.write_str(&format!($($first_field_2_fmt)*).replace("\n", "\n    "))?;
-
-                    $formatter.write_char(',')?;
-                } else {
-                    $formatter.write_fmt(format_args!($($first_field_2_fmt)*))?;
-                }
-            )?
-
-            $(
-                $crate::pad(&$first_field_3_value, $formatter)?;
-
-                if $formatter.alternate() {
-                    $formatter.write_char(',')?;
-                }
-            )?
+            let mut builder = $formatter.debug_tuple(stringify!($struct_name));
 
             $(
                 $(
-                    $formatter.write_str(separator)?;
-                    $crate::pad(&$self.$field, $formatter)?;
-
-                    if $formatter.alternate() {
-                        $formatter.write_char(',')?;
-                    }
+                    builder.field(&$self.$field);
                 )?
 
                 $(
-                    $formatter.write_str(separator)?;
-
-                    if $formatter.alternate() {
-                        $formatter.write_str(&format!($($field_2_fmt)*).replace("\n", "\n    "))?;
-
-                        $formatter.write_char(',')?;
+                    builder.field(&if _alternate {
+                        $crate::RawString(format!($($field_2_fmt)*).replace("\n", "\n    "))
                     } else {
-                        $formatter.write_fmt(format_args!($($field_2_fmt)*))?;
-                    }
+                        $crate::RawString(format!($($field_2_fmt)*))
+                    });
                 )?
 
                 $(
-                    $formatter.write_str(separator)?;
-                    $crate::pad(&$field_3_value, $formatter)?;
-
-                    if $formatter.alternate() {
-                        $formatter.write_char(',')?;
-                    }
+                    builder.field(&$field_3_value);
                 )?
             )*
 
-            if $formatter.alternate() {
-                return $formatter.write_str("\n)");
-            } else {
-                return $formatter.write_str(")");
-            }
+            return builder.finish();
         }
     }
 }
@@ -857,9 +391,9 @@ macro_rules! impl_debug_for_tuple_struct {
 #[macro_export]
 macro_rules! impl_debug_for_enum {
     // TODO enum
-    ($enum_name:ident::{$( $($variant_unit:ident)? $(($variant_tuple:ident ($($tuple:tt)*) $(:($(.$t_first_field:tt)? $((.$t_first_field_2:tt, $($t_first_field_2_fmt:tt)+))? $(let .$t_first_field_3:tt = $t_first_field_3_value:expr)? $(, $(.$t_field:tt)? $((.$t_field_2:tt, $($t_field_2_fmt:tt)+))? $(let .$t_field_3:tt = $t_field_3_value:expr)?)* $(,)*))? ) )? $({$variant_struct:ident {$($struct:tt)*} $(:($(.$s_first_field:tt)? $((.$s_first_field_2:tt, $($s_first_field_2_fmt:tt)+))? $(let .$s_first_field_3:ident = $s_first_field_3_value:expr)? $(, $(.$s_field:tt)? $((.$s_field_2:tt, $($s_field_2_fmt:tt)+))? $(let .$s_field_3:ident = $s_field_3_value:expr)?)* $(,)*))? })? ),+ $(,)*}, $formatter:expr, $self:expr $(,)*) => {
+    ($enum_name:ident::{$( $($variant_unit:ident)? $(($variant_tuple:ident ($($tuple:tt)*) $(:($( $(.$t_field:tt)? $((.$t_field_2:tt, $($t_field_2_fmt:tt)+))? $(let .$t_field_3:tt = $t_field_3_value:expr)? ),* $(,)*))? ) )? $({$variant_struct:ident {$($struct:tt)*} $(:($( $(.$s_field:tt)? $((.$s_field_2:tt, $($s_field_2_fmt:tt)+))? $(let .$s_field_3:ident = $s_field_3_value:expr)? ),* $(,)*))? })? ),+ $(,)*}, $formatter:expr, $self:expr $(,)*) => {
         {
-            use $crate::alloc::fmt::Write;
+            let _alternate = $formatter.alternate();
 
             match $self {
                 $(
@@ -870,185 +404,56 @@ macro_rules! impl_debug_for_enum {
                     )?
                     $(
                         Self::$variant_tuple ($($tuple)*)=> {
-                            let mut result = $formatter.write_str(stringify!($variant_tuple));
+                            let mut builder = $formatter.debug_tuple(stringify!($variant_tuple));
 
                             $(
-                                let separator = if $formatter.alternate() {
-                                    $formatter.write_str("(\n    ")?;
-
-                                    "\n    "
-                                } else {
-                                    $formatter.write_str("(")?;
-
-                                    ", "
-                                };
-
-                                $(
-                                    $crate::pad(&$t_first_field, $formatter)?;
-
-                                    if $formatter.alternate() {
-                                        $formatter.write_char(',')?;
-                                    }
-                                )?
-
-                                $(
-                                    if $formatter.alternate() {
-                                        $formatter.write_str(&format!($($t_first_field_2_fmt)*).replace("\n", "\n    "))?;
-
-                                        $formatter.write_char(',')?;
-                                    } else {
-                                        $formatter.write_fmt(format_args!($($t_first_field_2_fmt)*))?;
-                                    }
-                                )?
-
-                                $(
-                                    $crate::pad(&$t_first_field_3_value, $formatter)?;
-
-                                    if $formatter.alternate() {
-                                        $formatter.write_char(',')?;
-                                    }
-                                )?
-
                                 $(
                                     $(
-                                        $formatter.write_str(separator)?;
-                                        $crate::pad(&$t_field, $formatter)?;
-
-                                        if $formatter.alternate() {
-                                            $formatter.write_char(',')?;
-                                        }
+                                        builder.field(&$t_field);
                                     )?
 
                                     $(
-                                        $formatter.write_str(separator)?;
-
-                                        if $formatter.alternate() {
-                                            $formatter.write_str(&format!($($t_field_2_fmt)*).replace("\n", "\n    "))?;
-
-                                            $formatter.write_char(',')?;
+                                        builder.field(&if _alternate {
+                                            $crate::RawString(format!($($t_field_2_fmt)*).replace("\n", "\n    "))
                                         } else {
-                                            $formatter.write_fmt(format_args!($($t_field_2_fmt)*))?;
-                                        }
+                                            $crate::RawString(format!($($t_field_2_fmt)*))
+                                        });
                                     )?
 
                                     $(
-                                        $formatter.write_str(separator)?;
-                                        $crate::pad(&$t_field_3_value, $formatter)?;
-
-                                        if $formatter.alternate() {
-                                            $formatter.write_char(',')?;
-                                        }
+                                        builder.field(&$t_field_3_value);
                                     )?
                                 )*
-
-                                result = if $formatter.alternate() {
-                                    $formatter.write_str("\n)")
-                                } else {
-                                    $formatter.write_str(")")
-                                };
                             )?
 
-                            return result;
+                            return builder.finish();
                         }
                     )?
                     $(
                         Self::$variant_struct {$($struct)*}=> {
-                            let mut result = $formatter.write_str(stringify!($variant_struct));
+                            let mut builder = $formatter.debug_struct(stringify!($variant_struct));
 
                             $(
-                                let separator = if $formatter.alternate() {
-                                    $formatter.write_str(" {\n    ")?;
-
-                                    "\n    "
-                                } else {
-                                    $formatter.write_str(" { ")?;
-
-                                    ", "
-                                };
-
-                                $(
-                                    $formatter.write_str(stringify!($s_first_field))?;
-                                    $formatter.write_str(": ")?;
-
-                                    $crate::pad(&$s_first_field, $formatter)?;
-
-                                    if $formatter.alternate() {
-                                        $formatter.write_char(',')?;
-                                    }
-                                )?
-
-                                $(
-                                    $formatter.write_str(stringify!($s_first_field_2))?;
-                                    $formatter.write_str(": ")?;
-
-                                    if $formatter.alternate() {
-                                        $formatter.write_str(&format!($($s_first_field_2_fmt)*).replace("\n", "\n    "))?;
-
-                                        $formatter.write_char(',')?;
-                                    } else {
-                                        $formatter.write_fmt(format_args!($($s_first_field_2_fmt)*))?;
-                                    }
-                                )?
-
-                                $(
-                                    $formatter.write_str(stringify!($s_first_field_3))?;
-                                    $formatter.write_str(": ")?;
-
-                                    $crate::pad(&$s_first_field_3_value, $formatter)?;
-
-                                    if $formatter.alternate() {
-                                        $formatter.write_char(',')?;
-                                    }
-                                )?
-
                                 $(
                                     $(
-                                        $formatter.write_str(separator)?;
-                                        $formatter.write_str(stringify!($s_field))?;
-                                        $formatter.write_str(": ")?;
-
-                                        $crate::pad(&$s_field, $formatter)?;
-
-                                        if $formatter.alternate() {
-                                            $formatter.write_char(',')?;
-                                        }
+                                        builder.field(stringify!($s_field), &$s_field);
                                     )?
 
                                     $(
-                                        $formatter.write_str(separator)?;
-                                        $formatter.write_str(stringify!($s_field_2))?;
-                                        $formatter.write_str(": ")?;
-
-                                        if $formatter.alternate() {
-                                            $formatter.write_str(&format!($($s_field_2_fmt)*).replace("\n", "\n    "))?;
-
-                                            $formatter.write_char(',')?;
+                                        builder.field(stringify!($s_field_2), &if _alternate {
+                                            $crate::RawString(format!($($s_field_2_fmt)*).replace("\n", "\n    "))
                                         } else {
-                                            $formatter.write_fmt(format_args!($($s_field_2_fmt)*))?;
-                                        }
+                                            $crate::RawString(format!($($s_field_2_fmt)*))
+                                        });
                                     )?
 
                                     $(
-                                        $formatter.write_str(separator)?;
-                                        $formatter.write_str(stringify!($s_field_3))?;
-                                        $formatter.write_str(": ")?;
-
-                                        $crate::pad(&$s_field_3_value, $formatter)?;
-
-                                        if $formatter.alternate() {
-                                            $formatter.write_char(',')?;
-                                        }
+                                        builder.field(stringify!($s_field_3), &$s_field_3_value);
                                     )?
                                 )*
-
-                                result = if $formatter.alternate() {
-                                    $formatter.write_str("\n}")
-                                } else {
-                                    $formatter.write_str(" }")
-                                };
                             )?
 
-                            return result;
+                            return builder.finish();
                         }
                     )?
                 )+
@@ -1056,9 +461,9 @@ macro_rules! impl_debug_for_enum {
         }
     };
     // TODO enum full path
-    ({$enum_name:ident::$( $($variant_unit:ident)? $(($variant_tuple:ident ($($tuple:tt)*) $(:($(.$t_first_field:tt)? $((.$t_first_field_2:tt, $($t_first_field_2_fmt:tt)+))? $(let .$t_first_field_3:tt = $t_first_field_3_value:expr)? $(, $(.$t_field:tt)? $((.$t_field_2:tt, $($t_field_2_fmt:tt)+))? $(let .$t_field_3:tt = $t_field_3_value:expr)?)* $(,)*))? ) )? $({$variant_struct:ident {$($struct:tt)*} $(:($(.$s_first_field:tt)? $((.$s_first_field_2:tt, $($s_first_field_2_fmt:tt)+))? $(let .$s_first_field_3:ident = $s_first_field_3_value:expr)? $(, $(.$s_field:tt)? $((.$s_field_2:tt, $($s_field_2_fmt:tt)+))? $(let .$s_field_3:ident = $s_field_3_value:expr)?)* $(,)*))? })? ),+ $(,)*}, $formatter:expr, $self:expr $(,)*) => {
+    ({$enum_name:ident::$( $($variant_unit:ident)? $(($variant_tuple:ident ($($tuple:tt)*) $(:($( $(.$t_field:tt)? $((.$t_field_2:tt, $($t_field_2_fmt:tt)+))? $(let .$t_field_3:tt = $t_field_3_value:expr)? ),* $(,)*))? ) )? $({$variant_struct:ident {$($struct:tt)*} $(:($( $(.$s_field:tt)? $((.$s_field_2:tt, $($s_field_2_fmt:tt)+))? $(let .$s_field_3:ident = $s_field_3_value:expr)? ),* $(,)*))? })? ),+ $(,)*}, $formatter:expr, $self:expr $(,)*) => {
         {
-            use $crate::alloc::fmt::Write;
+            let _alternate = $formatter.alternate();
 
             match $self {
                 $(
@@ -1071,189 +476,56 @@ macro_rules! impl_debug_for_enum {
                     )?
                     $(
                         Self::$variant_tuple ($($tuple)*)=> {
-                            $formatter.write_str(stringify!($enum_name))?;
-                            $formatter.write_str("::")?;
-                            $formatter.write_str(stringify!($variant_tuple))?;
+                            let mut builder = $formatter.debug_tuple(&format!("{}::{}", stringify!($enum_name), stringify!($variant_tuple)));
 
                             $(
-                                let separator = if $formatter.alternate() {
-                                    $formatter.write_str("(\n    ")?;
-
-                                    "\n    "
-                                } else {
-                                    $formatter.write_str("(")?;
-
-                                    ", "
-                                };
-
-                                $(
-                                    $crate::pad(&$t_first_field, $formatter)?;
-
-                                    if $formatter.alternate() {
-                                        $formatter.write_char(',')?;
-                                    }
-                                )?
-
-                                $(
-                                    if $formatter.alternate() {
-                                        $formatter.write_str(&format!($($t_first_field_2_fmt)*).replace("\n", "\n    "))?;
-
-                                        $formatter.write_char(',')?;
-                                    } else {
-                                        $formatter.write_fmt(format_args!($($t_first_field_2_fmt)*))?;
-                                    }
-                                )?
-
-                                $(
-                                    $crate::pad(&$t_first_field_3_value, $formatter)?;
-
-                                    if $formatter.alternate() {
-                                        $formatter.write_char(',')?;
-                                    }
-                                )?
-
                                 $(
                                     $(
-                                        $formatter.write_str(separator)?;
-                                        $crate::pad(&$t_field, $formatter)?;
-
-                                        if $formatter.alternate() {
-                                            $formatter.write_char(',')?;
-                                        }
+                                        builder.field(&$t_field);
                                     )?
 
                                     $(
-                                        $formatter.write_str(separator)?;
-
-                                        if $formatter.alternate() {
-                                            $formatter.write_str(&format!($($t_field_2_fmt)*).replace("\n", "\n    "))?;
-
-                                            $formatter.write_char(',')?;
+                                        builder.field(&if _alternate {
+                                            $crate::RawString(format!($($t_field_2_fmt)*).replace("\n", "\n    "))
                                         } else {
-                                            $formatter.write_fmt(format_args!($($t_field_2_fmt)*))?;
-                                        }
+                                            $crate::RawString(format!($($t_field_2_fmt)*))
+                                        });
                                     )?
 
                                     $(
-                                        $formatter.write_str(separator)?;
-                                        $crate::pad(&$t_field_3_value, $formatter)?;
-
-                                        if $formatter.alternate() {
-                                            $formatter.write_char(',')?;
-                                        }
+                                        builder.field(&$t_field_3_value);
                                     )?
                                 )*
-
-                                if $formatter.alternate() {
-                                    $formatter.write_str("\n)")?;
-                                } else {
-                                    $formatter.write_str(")")?;
-                                }
                             )?
 
-                            return Ok(());
+                            return builder.finish();
                         }
                     )?
                     $(
                         Self::$variant_struct {$($struct)*}=> {
-                            $formatter.write_str(stringify!($enum_name))?;
-                            $formatter.write_str("::")?;
-                            $formatter.write_str(stringify!($variant_struct))?;
+                            let mut builder = $formatter.debug_struct(&format!("{}::{}", stringify!($enum_name), stringify!($variant_struct)));
 
                             $(
-                                let separator = if $formatter.alternate() {
-                                    $formatter.write_str(" {\n    ")?;
-
-                                    "\n    "
-                                } else {
-                                    $formatter.write_str(" { ")?;
-
-                                    ", "
-                                };
-
-                                $(
-                                    $formatter.write_str(stringify!($s_first_field))?;
-                                    $formatter.write_str(": ")?;
-
-                                    $crate::pad(&$s_first_field, $formatter)?;
-
-                                    if $formatter.alternate() {
-                                        $formatter.write_char(',')?;
-                                    }
-                                )?
-
-                                $(
-                                    $formatter.write_str(stringify!($s_first_field_2))?;
-                                    $formatter.write_str(": ")?;
-
-                                    if $formatter.alternate() {
-                                        $formatter.write_str(&format!($($s_first_field_2_fmt)*).replace("\n", "\n    "))?;
-
-                                        $formatter.write_char(',')?;
-                                    } else {
-                                        $formatter.write_fmt(format_args!($($s_first_field_2_fmt)*))?;
-                                    }
-                                )?
-
-                                $(
-                                    $formatter.write_str(stringify!($s_first_field_3))?;
-                                    $formatter.write_str(": ")?;
-
-                                    $crate::pad(&$s_first_field_3_value, $formatter)?;
-
-                                    if $formatter.alternate() {
-                                        $formatter.write_char(',')?;
-                                    }
-                                )?
-
                                 $(
                                     $(
-                                        $formatter.write_str(separator)?;
-                                        $formatter.write_str(stringify!($s_field))?;
-                                        $formatter.write_str(": ")?;
-
-                                        $crate::pad(&$s_field, $formatter)?;
-
-                                        if $formatter.alternate() {
-                                            $formatter.write_char(',')?;
-                                        }
+                                        builder.field(stringify!($s_field), &$s_field);
                                     )?
 
                                     $(
-                                        $formatter.write_str(separator)?;
-                                        $formatter.write_str(stringify!($s_field_2))?;
-                                        $formatter.write_str(": ")?;
-
-                                        if $formatter.alternate() {
-                                            $formatter.write_str(&format!($($s_field_2_fmt)*).replace("\n", "\n    "))?;
-
-                                            $formatter.write_char(',')?;
+                                        builder.field(stringify!($s_field_2), &if _alternate {
+                                            $crate::RawString(format!($($s_field_2_fmt)*).replace("\n", "\n    "))
                                         } else {
-                                            $formatter.write_fmt(format_args!($($s_field_2_fmt)*))?;
-                                        }
+                                            $crate::RawString(format!($($s_field_2_fmt)*))
+                                        });
                                     )?
 
                                     $(
-                                        $formatter.write_str(separator)?;
-                                        $formatter.write_str(stringify!($s_field_3))?;
-                                        $formatter.write_str(": ")?;
-
-                                        $crate::pad(&$s_field_3_value, $formatter)?;
-
-                                        if $formatter.alternate() {
-                                            $formatter.write_char(',')?;
-                                        }
+                                        builder.field(stringify!($s_field_3), &$s_field_3_value);
                                     )?
                                 )*
-
-                                if $formatter.alternate() {
-                                    $formatter.write_str("\n}")?;
-                                } else {
-                                    $formatter.write_str(" }")?;
-                                }
                             )?
 
-                            return Ok(());
+                            return builder.finish();
                         }
                     )?
                 )+
