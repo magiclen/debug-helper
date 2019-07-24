@@ -312,7 +312,11 @@ pub struct RawString(pub String);
 
 impl Debug for RawString {
     fn fmt(&self, f: &mut Formatter<'_>) -> FormatResult {
-        f.write_str(self.0.as_str())
+        if f.alternate() {
+            f.write_str(self.0.replace("\n", "\n    ").as_str())
+        } else {
+            f.write_str(self.0.as_str())
+        }
     }
 }
 
@@ -325,8 +329,6 @@ macro_rules! impl_debug_for_struct {
     // TODO struct
     ($struct_name:ident, $formatter:expr, $self:expr, $( $(.$field:ident)? $((.$field_2:ident, $($field_2_fmt:tt)+))? $(let .$field_3:ident = $field_3_value:expr)? ),* $(,)*) => {
         {
-            let _alternate = $formatter.alternate();
-
             let mut builder = $formatter.debug_struct(stringify!($struct_name));
 
             $(
@@ -335,11 +337,7 @@ macro_rules! impl_debug_for_struct {
                 )?
 
                 $(
-                    builder.field(stringify!($field_2), &if _alternate {
-                        $crate::RawString(format!($($field_2_fmt)*).replace("\n", "\n    "))
-                    } else {
-                        $crate::RawString(format!($($field_2_fmt)*))
-                    });
+                    builder.field(stringify!($field_2), &$crate::RawString(format!($($field_2_fmt)*)));
                 )?
 
                 $(
@@ -361,8 +359,6 @@ macro_rules! impl_debug_for_tuple_struct {
     // TODO tuple struct
     ($struct_name:ident, $formatter:expr, $self:expr, $( $(.$field:tt)? $((.$field_2:tt, $($field_2_fmt:tt)+))? $(let .$field_3:tt = $field_3_value:expr)? ),* $(,)*) => {
         {
-            let _alternate = $formatter.alternate();
-
             let mut builder = $formatter.debug_tuple(stringify!($struct_name));
 
             $(
@@ -371,11 +367,7 @@ macro_rules! impl_debug_for_tuple_struct {
                 )?
 
                 $(
-                    builder.field(&if _alternate {
-                        $crate::RawString(format!($($field_2_fmt)*).replace("\n", "\n    "))
-                    } else {
-                        $crate::RawString(format!($($field_2_fmt)*))
-                    });
+                    builder.field(&$crate::RawString(format!($($field_2_fmt)*)));
                 )?
 
                 $(
@@ -393,8 +385,6 @@ macro_rules! impl_debug_for_enum {
     // TODO enum
     ($enum_name:ident::{$( $($variant_unit:ident)? $(($variant_tuple:ident ($($tuple:tt)*) $(:($( $(.$t_field:tt)? $((.$t_field_2:tt, $($t_field_2_fmt:tt)+))? $(let .$t_field_3:tt = $t_field_3_value:expr)? ),* $(,)*))? ) )? $({$variant_struct:ident {$($struct:tt)*} $(:($( $(.$s_field:tt)? $((.$s_field_2:tt, $($s_field_2_fmt:tt)+))? $(let .$s_field_3:ident = $s_field_3_value:expr)? ),* $(,)*))? })? ),+ $(,)*}, $formatter:expr, $self:expr $(,)*) => {
         {
-            let _alternate = $formatter.alternate();
-
             match $self {
                 $(
                     $(
@@ -413,11 +403,7 @@ macro_rules! impl_debug_for_enum {
                                     )?
 
                                     $(
-                                        builder.field(&if _alternate {
-                                            $crate::RawString(format!($($t_field_2_fmt)*).replace("\n", "\n    "))
-                                        } else {
-                                            $crate::RawString(format!($($t_field_2_fmt)*))
-                                        });
+                                        builder.field(&$crate::RawString(format!($($t_field_2_fmt)*)));
                                     )?
 
                                     $(
@@ -440,11 +426,7 @@ macro_rules! impl_debug_for_enum {
                                     )?
 
                                     $(
-                                        builder.field(stringify!($s_field_2), &if _alternate {
-                                            $crate::RawString(format!($($s_field_2_fmt)*).replace("\n", "\n    "))
-                                        } else {
-                                            $crate::RawString(format!($($s_field_2_fmt)*))
-                                        });
+                                        builder.field(stringify!($s_field_2), &$crate::RawString(format!($($s_field_2_fmt)*)));
                                     )?
 
                                     $(
@@ -463,8 +445,6 @@ macro_rules! impl_debug_for_enum {
     // TODO enum full path
     ({$enum_name:ident::$( $($variant_unit:ident)? $(($variant_tuple:ident ($($tuple:tt)*) $(:($( $(.$t_field:tt)? $((.$t_field_2:tt, $($t_field_2_fmt:tt)+))? $(let .$t_field_3:tt = $t_field_3_value:expr)? ),* $(,)*))? ) )? $({$variant_struct:ident {$($struct:tt)*} $(:($( $(.$s_field:tt)? $((.$s_field_2:tt, $($s_field_2_fmt:tt)+))? $(let .$s_field_3:ident = $s_field_3_value:expr)? ),* $(,)*))? })? ),+ $(,)*}, $formatter:expr, $self:expr $(,)*) => {
         {
-            let _alternate = $formatter.alternate();
-
             match $self {
                 $(
                     $(
@@ -485,11 +465,7 @@ macro_rules! impl_debug_for_enum {
                                     )?
 
                                     $(
-                                        builder.field(&if _alternate {
-                                            $crate::RawString(format!($($t_field_2_fmt)*).replace("\n", "\n    "))
-                                        } else {
-                                            $crate::RawString(format!($($t_field_2_fmt)*))
-                                        });
+                                        builder.field(&$crate::RawString(format!($($t_field_2_fmt)*)));
                                     )?
 
                                     $(
@@ -512,11 +488,7 @@ macro_rules! impl_debug_for_enum {
                                     )?
 
                                     $(
-                                        builder.field(stringify!($s_field_2), &if _alternate {
-                                            $crate::RawString(format!($($s_field_2_fmt)*).replace("\n", "\n    "))
-                                        } else {
-                                            $crate::RawString(format!($($s_field_2_fmt)*))
-                                        });
+                                        builder.field(stringify!($s_field_2), &$crate::RawString(format!($($s_field_2_fmt)*)));
                                     )?
 
                                     $(
