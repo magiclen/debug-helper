@@ -3,7 +3,7 @@
 
 This crate provides declarative macros to help you implement the `Debug` trait manually.
 
-Instead of this crate, in most cases, you can use the [`derivative`](https://crates.io/crates/derivative) crate to implement the `Debug` trait.
+Instead of this crate, in most cases, you can use the [`educe`](https://crates.io/crates/educe) crate to implement the `Debug` trait.
 
 ## Examples
 
