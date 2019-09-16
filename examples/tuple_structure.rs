@@ -1,7 +1,7 @@
 #[macro_use(impl_debug_for_tuple_struct)]
 extern crate debug_helper;
 
-use std::fmt::{self, Formatter, Debug};
+use std::fmt::{self, Debug, Formatter};
 
 pub struct A(pub u8, pub i16, pub f64);
 

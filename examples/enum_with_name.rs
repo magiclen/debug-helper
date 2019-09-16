@@ -1,7 +1,7 @@
 #[macro_use(impl_debug_for_enum)]
 extern crate debug_helper;
 
-use std::fmt::{self, Formatter, Debug};
+use std::fmt::{self, Debug, Formatter};
 
 pub enum A {
     V1,

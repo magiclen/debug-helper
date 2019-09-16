@@ -1,7 +1,7 @@
 #[macro_use(impl_debug_for_struct)]
 extern crate debug_helper;
 
-use std::fmt::{self, Formatter, Debug};
+use std::fmt::{self, Debug, Formatter};
 
 pub struct A {
     pub f1: u8,

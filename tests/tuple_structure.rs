@@ -1,7 +1,7 @@
 #[macro_use(impl_debug_for_tuple_struct)]
 extern crate debug_helper;
 
-use std::fmt::{self, Formatter, Debug};
+use std::fmt::{self, Debug, Formatter};
 
 #[test]
 #[allow(dead_code)]
@@ -119,12 +119,18 @@ fn one_field_nested() {
     });
 
     assert_eq!("Outer(Inner { f1: 5, f2: 10 })", format!("{:?}", outer));
-    assert_eq!("Outer(\n    Inner {\n        f1: 5,\n        f2: 10,\n    },\n)", format!("{:#?}", outer));
+    assert_eq!(
+        "Outer(\n    Inner {\n        f1: 5,\n        f2: 10,\n    },\n)",
+        format!("{:#?}", outer)
+    );
     assert_eq!("Outer(Inner { f1: 0000000005, f2: 0000000010 })", format!("{:010.2?}", outer));
     assert_eq!("Outer(Inner { f1: 0000000005, f2: 0000000010 })", format!("{:0>10.2?}", outer));
     assert_eq!("Outer(Inner { f1: ????5?????, f2: ????10???? })", format!("{:?^10.2?}", outer));
     assert_eq!("Outer(Inner { f1: 5#########, f2: 10######## })", format!("{:#<10.2?}", outer));
-    assert_eq!("Outer(\n    Inner {\n        f1: 5#########,\n        f2: 10########,\n    },\n)", format!("{:#<#10.2?}", outer));
+    assert_eq!(
+        "Outer(\n    Inner {\n        f1: 5#########,\n        f2: 10########,\n    },\n)",
+        format!("{:#<#10.2?}", outer)
+    );
 }
 
 #[test]
@@ -149,11 +155,26 @@ fn all_renamed() {
     });
 
     assert_eq!("A(1.23456789, Inner { f1: 5, f2: 10 })", format!("{:?}", outer));
-    assert_eq!("A(\n    1.23456789,\n    Inner {\n        f1: 5,\n        f2: 10,\n    },\n)", format!("{:#?}", outer));
-    assert_eq!("A(0000001.23, Inner { f1: 0000000005, f2: 0000000010 })", format!("{:010.2?}", outer));
-    assert_eq!("A(0000001.23, Inner { f1: 0000000005, f2: 0000000010 })", format!("{:0>10.2?}", outer));
-    assert_eq!("A(???1.23???, Inner { f1: ????5?????, f2: ????10???? })", format!("{:?^10.2?}", outer));
-    assert_eq!("A(1.23######, Inner { f1: 5#########, f2: 10######## })", format!("{:#<10.2?}", outer));
+    assert_eq!(
+        "A(\n    1.23456789,\n    Inner {\n        f1: 5,\n        f2: 10,\n    },\n)",
+        format!("{:#?}", outer)
+    );
+    assert_eq!(
+        "A(0000001.23, Inner { f1: 0000000005, f2: 0000000010 })",
+        format!("{:010.2?}", outer)
+    );
+    assert_eq!(
+        "A(0000001.23, Inner { f1: 0000000005, f2: 0000000010 })",
+        format!("{:0>10.2?}", outer)
+    );
+    assert_eq!(
+        "A(???1.23???, Inner { f1: ????5?????, f2: ????10???? })",
+        format!("{:?^10.2?}", outer)
+    );
+    assert_eq!(
+        "A(1.23######, Inner { f1: 5#########, f2: 10######## })",
+        format!("{:#<10.2?}", outer)
+    );
     assert_eq!("A(\n    1.23######,\n    Inner {\n        f1: 5#########,\n        f2: 10########,\n    },\n)", format!("{:#<#10.2?}", outer));
 }
 
@@ -178,19 +199,38 @@ fn custom_fmt() {
         }
     }
 
-    let outer = Outer(1.23456789, Inner {
-        f1: 5,
-        f2: 10,
-    }, Intruder {
-        s: "Hi"
-    });
+    let outer = Outer(
+        1.23456789,
+        Inner {
+            f1: 5,
+            f2: 10,
+        },
+        Intruder {
+            s: "Hi",
+        },
+    );
 
     assert_eq!("Outer(number, Inner { f1: 5, f2: 10 }, Hi)", format!("{:?}", outer));
-    assert_eq!("Outer(\n    number,\n    Inner {\n        f1: 5,\n        f2: 10,\n    },\n    Hi,\n)", format!("{:#?}", outer));
-    assert_eq!("Outer(number, Inner { f1: 0000000005, f2: 0000000010 }, Hi)", format!("{:010.2?}", outer));
-    assert_eq!("Outer(number, Inner { f1: 0000000005, f2: 0000000010 }, Hi)", format!("{:0>10.2?}", outer));
-    assert_eq!("Outer(number, Inner { f1: ????5?????, f2: ????10???? }, Hi)", format!("{:?^10.2?}", outer));
-    assert_eq!("Outer(number, Inner { f1: 5#########, f2: 10######## }, Hi)", format!("{:#<10.2?}", outer));
+    assert_eq!(
+        "Outer(\n    number,\n    Inner {\n        f1: 5,\n        f2: 10,\n    },\n    Hi,\n)",
+        format!("{:#?}", outer)
+    );
+    assert_eq!(
+        "Outer(number, Inner { f1: 0000000005, f2: 0000000010 }, Hi)",
+        format!("{:010.2?}", outer)
+    );
+    assert_eq!(
+        "Outer(number, Inner { f1: 0000000005, f2: 0000000010 }, Hi)",
+        format!("{:0>10.2?}", outer)
+    );
+    assert_eq!(
+        "Outer(number, Inner { f1: ????5?????, f2: ????10???? }, Hi)",
+        format!("{:?^10.2?}", outer)
+    );
+    assert_eq!(
+        "Outer(number, Inner { f1: 5#########, f2: 10######## }, Hi)",
+        format!("{:#<10.2?}", outer)
+    );
     assert_eq!("Outer(\n    number,\n    Inner {\n        f1: 5#########,\n        f2: 10########,\n    },\n    Hi,\n)", format!("{:#<#10.2?}", outer));
 }
 
@@ -216,11 +256,26 @@ fn additional_fields() {
     });
 
     assert_eq!("Outer(1.23456789, Inner { f1: 5, f2: 10 }, Hi)", format!("{:?}", outer));
-    assert_eq!("Outer(\n    1.23456789,\n    Inner {\n        f1: 5,\n        f2: 10,\n    },\n    Hi,\n)", format!("{:#?}", outer));
-    assert_eq!("Outer(0000001.23, Inner { f1: 0000000005, f2: 0000000010 }, Hi)", format!("{:010.2?}", outer));
-    assert_eq!("Outer(0000001.23, Inner { f1: 0000000005, f2: 0000000010 }, Hi)", format!("{:0>10.2?}", outer));
-    assert_eq!("Outer(???1.23???, Inner { f1: ????5?????, f2: ????10???? }, Hi)", format!("{:?^10.2?}", outer));
-    assert_eq!("Outer(1.23######, Inner { f1: 5#########, f2: 10######## }, Hi)", format!("{:#<10.2?}", outer));
+    assert_eq!(
+        "Outer(\n    1.23456789,\n    Inner {\n        f1: 5,\n        f2: 10,\n    },\n    Hi,\n)",
+        format!("{:#?}", outer)
+    );
+    assert_eq!(
+        "Outer(0000001.23, Inner { f1: 0000000005, f2: 0000000010 }, Hi)",
+        format!("{:010.2?}", outer)
+    );
+    assert_eq!(
+        "Outer(0000001.23, Inner { f1: 0000000005, f2: 0000000010 }, Hi)",
+        format!("{:0>10.2?}", outer)
+    );
+    assert_eq!(
+        "Outer(???1.23???, Inner { f1: ????5?????, f2: ????10???? }, Hi)",
+        format!("{:?^10.2?}", outer)
+    );
+    assert_eq!(
+        "Outer(1.23######, Inner { f1: 5#########, f2: 10######## }, Hi)",
+        format!("{:#<10.2?}", outer)
+    );
     assert_eq!("Outer(\n    1.23######,\n    Inner {\n        f1: 5#########,\n        f2: 10########,\n    },\n    Hi,\n)", format!("{:#<#10.2?}", outer));
 }
 

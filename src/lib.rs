@@ -304,7 +304,7 @@ println!("{:#?}", a);
 
 extern crate alloc;
 
-use alloc::fmt::{Formatter, Result as FormatResult, Debug};
+use alloc::fmt::{Debug, Formatter, Result as FormatResult};
 use alloc::string::String;
 
 #[doc(hidden)]
