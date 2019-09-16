@@ -1,3 +1,4 @@
+#![allow(clippy::unreadable_literal)]
 #[macro_use(impl_debug_for_enum)]
 extern crate debug_helper;
 

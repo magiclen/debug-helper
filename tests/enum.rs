@@ -1,3 +1,5 @@
+#![allow(clippy::unreadable_literal)]
+
 #[macro_use(impl_debug_for_enum)]
 extern crate debug_helper;
 
@@ -146,6 +148,7 @@ fn one_field_nested() {
     }
 
     impl Debug for Outer {
+        #[allow(clippy::unneeded_field_pattern)]
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
             impl_debug_for_enum!(Outer::{F0, (F1(_, f2): (.f2)), {F2{f1: _, f2}: (.f2)}}, f, self);
         }
@@ -306,7 +309,7 @@ fn all() {
 }
 
 #[test]
-#[allow(dead_code)]
+#[allow(dead_code, clippy::cognitive_complexity)]
 fn custom_fmt() {
     #[derive(Debug)]
     struct Inner {
@@ -329,6 +332,7 @@ fn custom_fmt() {
     }
 
     impl Debug for Outer {
+        #[allow(clippy::unneeded_field_pattern)]
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
             impl_debug_for_enum!(Outer::{F0, (F1(_f1, f2): ((._f1, "number"), .f2)), {F2{f1: _, f2}: ((.f1, "number"), .f2)}, (F3(f3): ((.f3, "{}", f3.s)))}, f, self);
         }
