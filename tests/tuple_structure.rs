@@ -1,5 +1,3 @@
-#![allow(clippy::unreadable_literal)]
-
 #[macro_use(impl_debug_for_tuple_struct)]
 extern crate debug_helper;
 
