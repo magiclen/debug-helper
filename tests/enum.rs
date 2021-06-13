@@ -307,7 +307,6 @@ fn all() {
 }
 
 #[test]
-#[allow(dead_code, clippy::cognitive_complexity)]
 fn custom_fmt() {
     #[derive(Debug)]
     struct Inner {
