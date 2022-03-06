@@ -1,6 +1,3 @@
-#[macro_use(impl_debug_for_struct)]
-extern crate debug_helper;
-
 use std::fmt::{self, Debug, Formatter};
 
 pub struct A {
@@ -11,7 +8,7 @@ pub struct A {
 
 impl Debug for A {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-        impl_debug_for_struct!(A, f, self, .f1, (.f3, "{:.3}", self.f3), (.sum, "{:.3}", self.f1 as f64 + self.f2 as f64 + self.f3));
+        debug_helper::impl_debug_for_struct!(A, f, self, .f1, (.f3, "{:.3}", self.f3), (.sum, "{:.3}", self.f1 as f64 + self.f2 as f64 + self.f3));
     }
 }
 

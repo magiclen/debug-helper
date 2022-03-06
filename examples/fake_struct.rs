@@ -1,13 +1,10 @@
-#[macro_use(impl_debug_for_struct)]
-extern crate debug_helper;
-
 use std::fmt::{self, Debug, Formatter};
 
 pub struct A(pub u8, pub i16, pub f64);
 
 impl Debug for A {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-        impl_debug_for_struct!(A, f, self, let .f1 = self.0, let .f2 = self.1, let .f3 = self.2);
+        debug_helper::impl_debug_for_struct!(A, f, self, let .f1 = self.0, let .f2 = self.1, let .f3 = self.2);
     }
 }
 

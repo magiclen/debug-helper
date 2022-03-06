@@ -1,6 +1,3 @@
-#[macro_use(impl_debug_for_struct)]
-extern crate debug_helper;
-
 use std::fmt::{self, Debug, Formatter};
 
 #[test]
@@ -19,7 +16,7 @@ fn unit() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_struct!(Outer, f, self);
+            debug_helper::impl_debug_for_struct!(Outer, f, self);
         }
     }
 
@@ -55,7 +52,7 @@ fn unit_renamed() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_struct!(A, f, self);
+            debug_helper::impl_debug_for_struct!(A, f, self);
         }
     }
 
@@ -92,7 +89,7 @@ fn one_field_primitive() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_struct!(Outer, f, self, .f1);
+            debug_helper::impl_debug_for_struct!(Outer, f, self, .f1);
         }
     }
 
@@ -129,7 +126,7 @@ fn one_field_nested() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_struct!(Outer, f, self, .f2);
+            debug_helper::impl_debug_for_struct!(Outer, f, self, .f2);
         }
     }
 
@@ -170,6 +167,7 @@ fn one_field_nested() {
 
 #[test]
 fn all_renamed() {
+    #[allow(dead_code)]
     #[derive(Debug)]
     struct Inner {
         f1: u8,
@@ -183,7 +181,7 @@ fn all_renamed() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_struct!(A, f, self, .f1, .f2);
+            debug_helper::impl_debug_for_struct!(A, f, self, .f1, .f2);
         }
     }
 
@@ -240,7 +238,7 @@ fn custom_fmt() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_struct!(Outer, f, self, (.f1, "number"), .f2, (.f3, "{}", self.f3.s));
+            debug_helper::impl_debug_for_struct!(Outer, f, self, (.f1, "number"), .f2, (.f3, "{}", self.f3.s));
         }
     }
 
@@ -278,6 +276,7 @@ fn custom_fmt() {
 
 #[test]
 fn additional_fields() {
+    #[allow(dead_code)]
     #[derive(Debug)]
     struct Inner {
         f1: u8,
@@ -291,7 +290,7 @@ fn additional_fields() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_struct!(Outer, f, self, .f1, .f2, (.f3, "Hi"));
+            debug_helper::impl_debug_for_struct!(Outer, f, self, .f1, .f2, (.f3, "Hi"));
         }
     }
 
@@ -329,6 +328,7 @@ fn additional_fields() {
 
 #[test]
 fn fake_struct() {
+    #[allow(dead_code)]
     #[derive(Debug)]
     struct Inner {
         f1: u8,
@@ -339,7 +339,7 @@ fn fake_struct() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_struct!(Outer, f, self, let .f1 = self.0);
+            debug_helper::impl_debug_for_struct!(Outer, f, self, let .f1 = self.0);
         }
     }
 

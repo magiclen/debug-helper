@@ -1,6 +1,3 @@
-#[macro_use(impl_debug_for_tuple_struct)]
-extern crate debug_helper;
-
 use std::fmt::{self, Debug, Formatter};
 
 #[test]
@@ -16,7 +13,7 @@ fn unit() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_tuple_struct!(Outer, f, self);
+            debug_helper::impl_debug_for_tuple_struct!(Outer, f, self);
         }
     }
 
@@ -47,7 +44,7 @@ fn unit_renamed() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_tuple_struct!(A, f, self);
+            debug_helper::impl_debug_for_tuple_struct!(A, f, self);
         }
     }
 
@@ -78,7 +75,7 @@ fn one_field_primitive() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_tuple_struct!(Outer, f, self, .0);
+            debug_helper::impl_debug_for_tuple_struct!(Outer, f, self, .0);
         }
     }
 
@@ -109,7 +106,7 @@ fn one_field_nested() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_tuple_struct!(Outer, f, self, .1);
+            debug_helper::impl_debug_for_tuple_struct!(Outer, f, self, .1);
         }
     }
 
@@ -135,6 +132,7 @@ fn one_field_nested() {
 
 #[test]
 fn all_renamed() {
+    #[allow(dead_code)]
     #[derive(Debug)]
     struct Inner {
         f1: u8,
@@ -145,7 +143,7 @@ fn all_renamed() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_tuple_struct!(A, f, self, .0, .1);
+            debug_helper::impl_debug_for_tuple_struct!(A, f, self, .0, .1);
         }
     }
 
@@ -195,7 +193,7 @@ fn custom_fmt() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_tuple_struct!(Outer, f, self, (.0, "number"), .1, (.2, "{}", self.2.s));
+            debug_helper::impl_debug_for_tuple_struct!(Outer, f, self, (.0, "number"), .1, (.2, "{}", self.2.s));
         }
     }
 
@@ -236,6 +234,7 @@ fn custom_fmt() {
 
 #[test]
 fn additional_fields() {
+    #[allow(dead_code)]
     #[derive(Debug)]
     struct Inner {
         f1: u8,
@@ -246,7 +245,7 @@ fn additional_fields() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_tuple_struct!(Outer, f, self, .0, .1, (.2, "Hi"));
+            debug_helper::impl_debug_for_tuple_struct!(Outer, f, self, .0, .1, (.2, "Hi"));
         }
     }
 
@@ -295,7 +294,7 @@ fn fake_tuple_struct() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_tuple_struct!(Outer, f, self, let .0 = self.f1);
+            debug_helper::impl_debug_for_tuple_struct!(Outer, f, self, let .0 = self.f1);
         }
     }
 

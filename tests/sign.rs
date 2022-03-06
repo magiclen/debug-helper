@@ -1,10 +1,8 @@
-#[macro_use(impl_debug_for_struct)]
-extern crate debug_helper;
-
 use std::fmt::{self, Debug, Formatter};
 
 #[test]
 fn signed_values() {
+    #[allow(dead_code)]
     #[derive(Debug)]
     struct Inner {
         f1: u32,
@@ -20,7 +18,7 @@ fn signed_values() {
 
     impl Debug for MyStruct {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_struct!(MyStruct, f, self, .f1, .f2, .f3, .f4);
+            debug_helper::impl_debug_for_struct!(MyStruct, f, self, .f1, .f2, .f3, .f4);
         }
     }
 
@@ -43,6 +41,7 @@ fn signed_values() {
 
 #[test]
 fn zero_values() {
+    #[allow(dead_code)]
     #[derive(Debug)]
     struct Inner {
         f1: u32,
@@ -58,7 +57,7 @@ fn zero_values() {
 
     impl Debug for MyStruct {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_struct!(MyStruct, f, self, .f1, .f2, .f3, .f4);
+            debug_helper::impl_debug_for_struct!(MyStruct, f, self, .f1, .f2, .f3, .f4);
         }
     }
 

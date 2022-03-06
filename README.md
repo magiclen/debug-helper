@@ -12,8 +12,6 @@ Instead of this crate, in most cases, you can use the [`educe`](https://crates.i
 For structs,
 
 ```rust
-#[macro_use] extern crate debug_helper;
-
 use std::fmt::{self, Formatter, Debug};
 
 pub struct A {
@@ -24,7 +22,7 @@ pub struct A {
 
 impl Debug for A {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-        impl_debug_for_struct!(A, f, self, .f1, (.f3, "{:.3}", self.f3));
+        debug_helper::impl_debug_for_struct!(A, f, self, .f1, (.f3, "{:.3}", self.f3));
     }
 }
 
@@ -47,15 +45,13 @@ println!("{:#?}", a);
 For tuple structs,
 
 ```rust
-#[macro_use] extern crate debug_helper;
-
 use std::fmt::{self, Formatter, Debug};
 
 pub struct A(pub u8, pub i16, pub f64);
 
 impl Debug for A {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-        impl_debug_for_tuple_struct!(A, f, self, .0, (.2, "{:.3}", self.2));
+        debug_helper::impl_debug_for_tuple_struct!(A, f, self, .0, (.2, "{:.3}", self.2));
     }
 }
 
@@ -74,8 +70,6 @@ println!("{:#?}", a);
 For enums (without the enum name),
 
 ```rust
-#[macro_use] extern crate debug_helper;
-
 use std::fmt::{self, Formatter, Debug};
 
 pub enum A {
@@ -90,7 +84,7 @@ pub enum A {
 
 impl Debug for A {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-        impl_debug_for_enum!(A::{V1, (V2(f1, _, f3): (.f1, (.f3, "{:.3}", f3))), {V3{f1, f2: _, f3}: (.f1, (.f3, "{:.3}", f3))}}, f, self);
+        debug_helper::impl_debug_for_enum!(A::{V1, (V2(f1, _, f3): (.f1, (.f3, "{:.3}", f3))), {V3{f1, f2: _, f3}: (.f1, (.f3, "{:.3}", f3))}}, f, self);
     }
 }
 
@@ -122,8 +116,6 @@ println!("{:#?}", c);
 For enums (with the enum name),
 
 ```rust
-#[macro_use] extern crate debug_helper;
-
 use std::fmt::{self, Formatter, Debug};
 
 pub enum A {
@@ -138,7 +130,7 @@ pub enum A {
 
 impl Debug for A {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-        impl_debug_for_enum!({A::V1, (V2(f1, _, f3): (.f1, (.f3, "{:.3}", f3))), {V3{f1, f2: _, f3}: (.f1, (.f3, "{:.3}", f3))}}, f, self);
+        debug_helper::impl_debug_for_enum!({A::V1, (V2(f1, _, f3): (.f1, (.f3, "{:.3}", f3))), {V3{f1, f2: _, f3}: (.f1, (.f3, "{:.3}", f3))}}, f, self);
     }
 }
 
@@ -172,8 +164,6 @@ println!("{:#?}", c);
 Ghost fields,
 
 ```rust
-#[macro_use] extern crate debug_helper;
-
 use std::fmt::{self, Formatter, Debug};
 
 pub struct A {
@@ -184,7 +174,7 @@ pub struct A {
 
 impl Debug for A {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-        impl_debug_for_struct!(A, f, self, .f1, (.f3, "{:.3}", self.f3), (.sum, "{:.3}", self.f1 as f64 + self.f2 as f64 + self.f3));
+        debug_helper::impl_debug_for_struct!(A, f, self, .f1, (.f3, "{:.3}", self.f3), (.sum, "{:.3}", self.f1 as f64 + self.f2 as f64 + self.f3));
     }
 }
 
@@ -206,15 +196,13 @@ println!("{:#?}", a);
 ```
 
 ```rust
-#[macro_use] extern crate debug_helper;
-
 use std::fmt::{self, Formatter, Debug};
 
 pub struct A(pub u8, pub i16, pub f64);
 
 impl Debug for A {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-        impl_debug_for_tuple_struct!(A, f, self, .0, (.2, "{:.3}", self.2), (.3, "{:.3}", self.0 as f64 + self.1 as f64 + self.2));
+        debug_helper::impl_debug_for_tuple_struct!(A, f, self, .0, (.2, "{:.3}", self.2), (.3, "{:.3}", self.0 as f64 + self.1 as f64 + self.2));
     }
 }
 
@@ -234,15 +222,13 @@ println!("{:#?}", a);
 Fake structs,
 
 ```rust
-#[macro_use] extern crate debug_helper;
-
 use std::fmt::{self, Formatter, Debug};
 
 pub struct A(pub u8, pub i16, pub f64);
 
 impl Debug for A {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-        impl_debug_for_struct!(A, f, self, let .f1 = self.0, let .f2 = self.1, let .f3 = self.2);
+        debug_helper::impl_debug_for_struct!(A, f, self, let .f1 = self.0, let .f2 = self.1, let .f3 = self.2);
     }
 }
 
@@ -262,8 +248,6 @@ println!("{:#?}", a);
 Fake tuple structs,
 
 ```rust
-#[macro_use] extern crate debug_helper;
-
 use std::fmt::{self, Formatter, Debug};
 
 pub struct A {
@@ -274,7 +258,7 @@ pub struct A {
 
 impl Debug for A {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-        impl_debug_for_tuple_struct!(A, f, self, let .0 = self.f1, let .1 = self.f2, let .2 = self.f3);
+        debug_helper::impl_debug_for_tuple_struct!(A, f, self, let .0 = self.f1, let .1 = self.f2, let .2 = self.f3);
     }
 }
 

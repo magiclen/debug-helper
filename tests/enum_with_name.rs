@@ -1,6 +1,3 @@
-#[macro_use(impl_debug_for_enum)]
-extern crate debug_helper;
-
 use std::fmt::{self, Debug, Formatter};
 
 #[test]
@@ -23,7 +20,7 @@ fn unit() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_enum!({Outer::F0, (F1(..)), {F2{..}}}, f, self);
+            debug_helper::impl_debug_for_enum!({Outer::F0, (F1(..)), {F2{..}}}, f, self);
         }
     }
 
@@ -85,7 +82,7 @@ fn unit_renamed() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_enum!({A::F0, (F1(..)), {F2{..}}}, f, self);
+            debug_helper::impl_debug_for_enum!({A::F0, (F1(..)), {F2{..}}}, f, self);
         }
     }
 
@@ -147,7 +144,7 @@ fn one_field_primitive() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_enum!({Outer::F0, (F1(f1, ..): (.f1)), {F2{f1, ..}: (.f1)}}, f, self);
+            debug_helper::impl_debug_for_enum!({Outer::F0, (F1(f1, ..): (.f1)), {F2{f1, ..}: (.f1)}}, f, self);
         }
     }
 
@@ -209,7 +206,7 @@ fn one_field_nested() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_enum!({Outer::F0, (F1(_, f2): (.f2)), {F2{f1: _, f2}: (.f2)}}, f, self);
+            debug_helper::impl_debug_for_enum!({Outer::F0, (F1(_, f2): (.f2)), {F2{f1: _, f2}: (.f2)}}, f, self);
         }
     }
 
@@ -307,7 +304,7 @@ fn all() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_enum!({Outer::F0, (F1(f1, f2): (.f1, .f2)), {F2{f1, f2}: (.f1, .f2)}}, f, self);
+            debug_helper::impl_debug_for_enum!({Outer::F0, (F1(f1, f2): (.f1, .f2)), {F2{f1, f2}: (.f1, .f2)}}, f, self);
         }
     }
 
@@ -399,7 +396,7 @@ fn all_renamed() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_enum!({A::F0, (F1(f1, f2): (.f1, .f2)), {F2{f1, f2}: (.f1, .f2)}}, f, self);
+            debug_helper::impl_debug_for_enum!({A::F0, (F1(f1, f2): (.f1, .f2)), {F2{f1, f2}: (.f1, .f2)}}, f, self);
         }
     }
 
@@ -496,7 +493,7 @@ fn custom_fmt() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_enum!({Outer::F0, (F1(_f1, f2): ((._f1, "number"), .f2)), {F2{f1: _, f2}: ((.f1, "number"), .f2)}, (F3(f3): ((.f3, "{}", f3.s)))}, f, self);
+            debug_helper::impl_debug_for_enum!({Outer::F0, (F1(_f1, f2): ((._f1, "number"), .f2)), {F2{f1: _, f2}: ((.f1, "number"), .f2)}, (F3(f3): ((.f3, "{}", f3.s)))}, f, self);
         }
     }
 
@@ -599,7 +596,7 @@ fn additional_fields() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_enum!({Outer::F0, (F1(f1, f2): (.f1, .f2)), {F2{f1, f2}: (.f1, .f2, (.f3, "Hi"))}}, f, self);
+            debug_helper::impl_debug_for_enum!({Outer::F0, (F1(f1, f2): (.f1, .f2)), {F2{f1, f2}: (.f1, .f2, (.f3, "Hi"))}}, f, self);
         }
     }
 
@@ -691,7 +688,7 @@ fn reset() {
 
     impl Debug for Outer {
         fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
-            impl_debug_for_enum!({Outer::F0, (F1(f1, f2): (let .f1 = f2, let .f2 = f1)), {F2{f1, f2}: (let .f1 = f2, let .f2 = f1)}}, f, self);
+            debug_helper::impl_debug_for_enum!({Outer::F0, (F1(f1, f2): (let .f1 = f2, let .f2 = f1)), {F2{f1, f2}: (let .f1 = f2, let .f2 = f1)}}, f, self);
         }
     }
 
