@@ -12,10 +12,7 @@ fn unit() {
     enum Outer {
         F0,
         F1(f64, Inner),
-        F2 {
-            f1: f64,
-            f2: Inner,
-        },
+        F2 { f1: f64, f2: Inner },
     }
 
     impl Debug for Outer {
@@ -26,14 +23,12 @@ fn unit() {
 
     let outer_1 = Outer::F0;
     let outer_2 = Outer::F1(1.23456789, Inner {
-        f1: 5,
-        f2: 10,
+        f1: 5, f2: 10
     });
     let outer_3 = Outer::F2 {
         f1: 1.23456789,
         f2: Inner {
-            f1: 5,
-            f2: 10,
+            f1: 5, f2: 10
         },
     };
 
@@ -74,10 +69,7 @@ fn one_field_primitive() {
     enum Outer {
         F0,
         F1(f64, Inner),
-        F2 {
-            f1: f64,
-            f2: Inner,
-        },
+        F2 { f1: f64, f2: Inner },
     }
 
     impl Debug for Outer {
@@ -88,14 +80,12 @@ fn one_field_primitive() {
 
     let outer_1 = Outer::F0;
     let outer_2 = Outer::F1(1.23456789, Inner {
-        f1: 5,
-        f2: 10,
+        f1: 5, f2: 10
     });
     let outer_3 = Outer::F2 {
         f1: 1.23456789,
         f2: Inner {
-            f1: 5,
-            f2: 10,
+            f1: 5, f2: 10
         },
     };
 
@@ -136,10 +126,7 @@ fn one_field_nested() {
     enum Outer {
         F0,
         F1(f64, Inner),
-        F2 {
-            f1: f64,
-            f2: Inner,
-        },
+        F2 { f1: f64, f2: Inner },
     }
 
     impl Debug for Outer {
@@ -151,14 +138,12 @@ fn one_field_nested() {
 
     let outer_1 = Outer::F0;
     let outer_2 = Outer::F1(1.23456789, Inner {
-        f1: 5,
-        f2: 10,
+        f1: 5, f2: 10
     });
     let outer_3 = Outer::F2 {
         f1: 1.23456789,
         f2: Inner {
-            f1: 5,
-            f2: 10,
+            f1: 5, f2: 10
         },
     };
 
@@ -223,10 +208,7 @@ fn all() {
     enum Outer {
         F0,
         F1(f64, Inner),
-        F2 {
-            f1: f64,
-            f2: Inner,
-        },
+        F2 { f1: f64, f2: Inner },
     }
 
     impl Debug for Outer {
@@ -237,14 +219,12 @@ fn all() {
 
     let outer_1 = Outer::F0;
     let outer_2 = Outer::F1(1.23456789, Inner {
-        f1: 5,
-        f2: 10,
+        f1: 5, f2: 10
     });
     let outer_3 = Outer::F2 {
         f1: 1.23456789,
         f2: Inner {
-            f1: 5,
-            f2: 10,
+            f1: 5, f2: 10
         },
     };
 
@@ -277,7 +257,11 @@ fn all() {
         "F1(1.23######, Inner { f1: 5#########, f2: 10######## })",
         format!("{:#<10.2?}", outer_2)
     );
-    assert_eq!("F1(\n    1.23######,\n    Inner {\n        f1: 5#########,\n        f2: 10########,\n    },\n)", format!("{:#<#10.2?}", outer_2));
+    assert_eq!(
+        "F1(\n    1.23######,\n    Inner {\n        f1: 5#########,\n        f2: 10########,\n    \
+         },\n)",
+        format!("{:#<#10.2?}", outer_2)
+    );
 
     assert_eq!("F2 { f1: 1.23456789, f2: Inner { f1: 5, f2: 10 } }", format!("{:?}", outer_3));
     assert_eq!(
@@ -300,7 +284,11 @@ fn all() {
         "F2 { f1: 1.23######, f2: Inner { f1: 5#########, f2: 10######## } }",
         format!("{:#<10.2?}", outer_3)
     );
-    assert_eq!("F2 {\n    f1: 1.23######,\n    f2: Inner {\n        f1: 5#########,\n        f2: 10########,\n    },\n}", format!("{:#<#10.2?}", outer_3));
+    assert_eq!(
+        "F2 {\n    f1: 1.23######,\n    f2: Inner {\n        f1: 5#########,\n        f2: \
+         10########,\n    },\n}",
+        format!("{:#<#10.2?}", outer_3)
+    );
 }
 
 #[test]
@@ -320,10 +308,7 @@ fn custom_fmt() {
     enum Outer {
         F0,
         F1(f64, Inner),
-        F2 {
-            f1: f64,
-            f2: Inner,
-        },
+        F2 { f1: f64, f2: Inner },
         F3(Intruder),
     }
 
@@ -336,18 +321,16 @@ fn custom_fmt() {
 
     let outer_1 = Outer::F0;
     let outer_2 = Outer::F1(1.23456789, Inner {
-        f1: 5,
-        f2: 10,
+        f1: 5, f2: 10
     });
     let outer_3 = Outer::F2 {
         f1: 1.23456789,
         f2: Inner {
-            f1: 5,
-            f2: 10,
+            f1: 5, f2: 10
         },
     };
     let outer_4 = Outer::F3(Intruder {
-        s: "Hi",
+        s: "Hi"
     });
 
     assert_eq!("F0", format!("{:?}", outer_1));
@@ -379,7 +362,11 @@ fn custom_fmt() {
         "F1(number, Inner { f1: 5#########, f2: 10######## })",
         format!("{:#<10.2?}", outer_2)
     );
-    assert_eq!("F1(\n    number,\n    Inner {\n        f1: 5#########,\n        f2: 10########,\n    },\n)", format!("{:#<#10.2?}", outer_2));
+    assert_eq!(
+        "F1(\n    number,\n    Inner {\n        f1: 5#########,\n        f2: 10########,\n    \
+         },\n)",
+        format!("{:#<#10.2?}", outer_2)
+    );
 
     assert_eq!("F2 { f1: number, f2: Inner { f1: 5, f2: 10 } }", format!("{:?}", outer_3));
     assert_eq!(
@@ -402,7 +389,11 @@ fn custom_fmt() {
         "F2 { f1: number, f2: Inner { f1: 5#########, f2: 10######## } }",
         format!("{:#<10.2?}", outer_3)
     );
-    assert_eq!("F2 {\n    f1: number,\n    f2: Inner {\n        f1: 5#########,\n        f2: 10########,\n    },\n}", format!("{:#<#10.2?}", outer_3));
+    assert_eq!(
+        "F2 {\n    f1: number,\n    f2: Inner {\n        f1: 5#########,\n        f2: \
+         10########,\n    },\n}",
+        format!("{:#<#10.2?}", outer_3)
+    );
 
     assert_eq!("F3(Hi)", format!("{:?}", outer_4));
     assert_eq!("F3(\n    Hi,\n)", format!("{:#?}", outer_4));
@@ -425,10 +416,7 @@ fn additional_fields() {
     enum Outer {
         F0,
         F1(f64, Inner),
-        F2 {
-            f1: f64,
-            f2: Inner,
-        },
+        F2 { f1: f64, f2: Inner },
     }
 
     impl Debug for Outer {
@@ -439,14 +427,12 @@ fn additional_fields() {
 
     let outer_1 = Outer::F0;
     let outer_2 = Outer::F1(1.23456789, Inner {
-        f1: 5,
-        f2: 10,
+        f1: 5, f2: 10
     });
     let outer_3 = Outer::F2 {
         f1: 1.23456789,
         f2: Inner {
-            f1: 5,
-            f2: 10,
+            f1: 5, f2: 10
         },
     };
 
@@ -479,13 +465,21 @@ fn additional_fields() {
         "F1(1.23######, Inner { f1: 5#########, f2: 10######## })",
         format!("{:#<10.2?}", outer_2)
     );
-    assert_eq!("F1(\n    1.23######,\n    Inner {\n        f1: 5#########,\n        f2: 10########,\n    },\n)", format!("{:#<#10.2?}", outer_2));
+    assert_eq!(
+        "F1(\n    1.23######,\n    Inner {\n        f1: 5#########,\n        f2: 10########,\n    \
+         },\n)",
+        format!("{:#<#10.2?}", outer_2)
+    );
 
     assert_eq!(
         "F2 { f1: 1.23456789, f2: Inner { f1: 5, f2: 10 }, f3: Hi }",
         format!("{:?}", outer_3)
     );
-    assert_eq!("F2 {\n    f1: 1.23456789,\n    f2: Inner {\n        f1: 5,\n        f2: 10,\n    },\n    f3: Hi,\n}", format!("{:#?}", outer_3));
+    assert_eq!(
+        "F2 {\n    f1: 1.23456789,\n    f2: Inner {\n        f1: 5,\n        f2: 10,\n    },\n    \
+         f3: Hi,\n}",
+        format!("{:#?}", outer_3)
+    );
     assert_eq!(
         "F2 { f1: 0000001.23, f2: Inner { f1: 0000000005, f2: 0000000010 }, f3: Hi }",
         format!("{:010.2?}", outer_3)
@@ -502,7 +496,11 @@ fn additional_fields() {
         "F2 { f1: 1.23######, f2: Inner { f1: 5#########, f2: 10######## }, f3: Hi }",
         format!("{:#<10.2?}", outer_3)
     );
-    assert_eq!("F2 {\n    f1: 1.23######,\n    f2: Inner {\n        f1: 5#########,\n        f2: 10########,\n    },\n    f3: Hi,\n}", format!("{:#<#10.2?}", outer_3));
+    assert_eq!(
+        "F2 {\n    f1: 1.23######,\n    f2: Inner {\n        f1: 5#########,\n        f2: \
+         10########,\n    },\n    f3: Hi,\n}",
+        format!("{:#<#10.2?}", outer_3)
+    );
 }
 
 #[test]
@@ -517,10 +515,7 @@ fn reset() {
     enum Outer {
         F0,
         F1(f64, Inner),
-        F2 {
-            f1: f64,
-            f2: Inner,
-        },
+        F2 { f1: f64, f2: Inner },
     }
 
     impl Debug for Outer {
@@ -531,14 +526,12 @@ fn reset() {
 
     let outer_1 = Outer::F0;
     let outer_2 = Outer::F1(1.23456789, Inner {
-        f1: 5,
-        f2: 10,
+        f1: 5, f2: 10
     });
     let outer_3 = Outer::F2 {
         f1: 1.23456789,
         f2: Inner {
-            f1: 5,
-            f2: 10,
+            f1: 5, f2: 10
         },
     };
 
@@ -571,7 +564,11 @@ fn reset() {
         "F1(Inner { f1: 5#########, f2: 10######## }, 1.23######)",
         format!("{:#<10.2?}", outer_2)
     );
-    assert_eq!("F1(\n    Inner {\n        f1: 5#########,\n        f2: 10########,\n    },\n    1.23######,\n)", format!("{:#<#10.2?}", outer_2));
+    assert_eq!(
+        "F1(\n    Inner {\n        f1: 5#########,\n        f2: 10########,\n    },\n    \
+         1.23######,\n)",
+        format!("{:#<#10.2?}", outer_2)
+    );
 
     assert_eq!("F2 { f1: Inner { f1: 5, f2: 10 }, f2: 1.23456789 }", format!("{:?}", outer_3));
     assert_eq!(
@@ -594,5 +591,9 @@ fn reset() {
         "F2 { f1: Inner { f1: 5#########, f2: 10######## }, f2: 1.23###### }",
         format!("{:#<10.2?}", outer_3)
     );
-    assert_eq!("F2 {\n    f1: Inner {\n        f1: 5#########,\n        f2: 10########,\n    },\n    f2: 1.23######,\n}", format!("{:#<#10.2?}", outer_3));
+    assert_eq!(
+        "F2 {\n    f1: Inner {\n        f1: 5#########,\n        f2: 10########,\n    },\n    f2: \
+         1.23######,\n}",
+        format!("{:#<#10.2?}", outer_3)
+    );
 }

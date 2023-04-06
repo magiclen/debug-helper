@@ -288,8 +288,10 @@ println!("{:#?}", a);
 
 extern crate alloc;
 
-use alloc::fmt::{Debug, Formatter, Result as FormatResult};
-use alloc::string::String;
+use alloc::{
+    fmt::{Debug, Formatter, Result as FormatResult},
+    string::String,
+};
 
 #[doc(hidden)]
 pub struct RawString(pub String);

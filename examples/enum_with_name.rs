@@ -3,11 +3,7 @@ use std::fmt::{self, Debug, Formatter};
 pub enum A {
     V1,
     V2(u8, i16, f64),
-    V3 {
-        f1: u8,
-        f2: i16,
-        f3: f64,
-    },
+    V3 { f1: u8, f2: i16, f3: f64 },
 }
 
 impl Debug for A {
@@ -20,9 +16,7 @@ fn main() {
     let a = A::V1;
     let b = A::V2(1, 2, std::f64::consts::PI);
     let c = A::V3 {
-        f1: 1,
-        f2: 2,
-        f3: std::f64::consts::PI,
+        f1: 1, f2: 2, f3: std::f64::consts::PI
     };
 
     println!("{:#?}", a);

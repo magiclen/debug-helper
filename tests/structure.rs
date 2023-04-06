@@ -23,8 +23,7 @@ fn unit() {
     let outer = Outer {
         f1: 1.23456789,
         f2: Inner {
-            f1: 5,
-            f2: 10,
+            f1: 5, f2: 10
         },
     };
 
@@ -59,8 +58,7 @@ fn unit_renamed() {
     let outer = Outer {
         f1: 1.23456789,
         f2: Inner {
-            f1: 5,
-            f2: 10,
+            f1: 5, f2: 10
         },
     };
 
@@ -96,8 +94,7 @@ fn one_field_primitive() {
     let outer = Outer {
         f1: 1.23456789,
         f2: Inner {
-            f1: 5,
-            f2: 10,
+            f1: 5, f2: 10
         },
     };
 
@@ -133,8 +130,7 @@ fn one_field_nested() {
     let outer = Outer {
         f1: 1.23456789,
         f2: Inner {
-            f1: 5,
-            f2: 10,
+            f1: 5, f2: 10
         },
     };
 
@@ -188,8 +184,7 @@ fn all_renamed() {
     let outer = Outer {
         f1: 1.23456789,
         f2: Inner {
-            f1: 5,
-            f2: 10,
+            f1: 5, f2: 10
         },
     };
 
@@ -214,7 +209,11 @@ fn all_renamed() {
         "A { f1: 1.23######, f2: Inner { f1: 5#########, f2: 10######## } }",
         format!("{:#<10.2?}", outer)
     );
-    assert_eq!("A {\n    f1: 1.23######,\n    f2: Inner {\n        f1: 5#########,\n        f2: 10########,\n    },\n}", format!("{:#<#10.2?}", outer));
+    assert_eq!(
+        "A {\n    f1: 1.23######,\n    f2: Inner {\n        f1: 5#########,\n        f2: \
+         10########,\n    },\n}",
+        format!("{:#<#10.2?}", outer)
+    );
 }
 
 #[test]
@@ -245,16 +244,19 @@ fn custom_fmt() {
     let outer = Outer {
         f1: 1.23456789,
         f2: Inner {
-            f1: 5,
-            f2: 10,
+            f1: 5, f2: 10
         },
         f3: Intruder {
-            s: "Hi",
+            s: "Hi"
         },
     };
 
     assert_eq!("Outer { f1: number, f2: Inner { f1: 5, f2: 10 }, f3: Hi }", format!("{:?}", outer));
-    assert_eq!("Outer {\n    f1: number,\n    f2: Inner {\n        f1: 5,\n        f2: 10,\n    },\n    f3: Hi,\n}", format!("{:#?}", outer));
+    assert_eq!(
+        "Outer {\n    f1: number,\n    f2: Inner {\n        f1: 5,\n        f2: 10,\n    },\n    \
+         f3: Hi,\n}",
+        format!("{:#?}", outer)
+    );
     assert_eq!(
         "Outer { f1: number, f2: Inner { f1: 0000000005, f2: 0000000010 }, f3: Hi }",
         format!("{:010.2?}", outer)
@@ -271,7 +273,11 @@ fn custom_fmt() {
         "Outer { f1: number, f2: Inner { f1: 5#########, f2: 10######## }, f3: Hi }",
         format!("{:#<10.2?}", outer)
     );
-    assert_eq!("Outer {\n    f1: number,\n    f2: Inner {\n        f1: 5#########,\n        f2: 10########,\n    },\n    f3: Hi,\n}", format!("{:#<#10.2?}", outer));
+    assert_eq!(
+        "Outer {\n    f1: number,\n    f2: Inner {\n        f1: 5#########,\n        f2: \
+         10########,\n    },\n    f3: Hi,\n}",
+        format!("{:#<#10.2?}", outer)
+    );
 }
 
 #[test]
@@ -297,8 +303,7 @@ fn additional_fields() {
     let outer = Outer {
         f1: 1.23456789,
         f2: Inner {
-            f1: 5,
-            f2: 10,
+            f1: 5, f2: 10
         },
     };
 
@@ -323,7 +328,11 @@ fn additional_fields() {
         "Outer { f1: 1.23######, f2: Inner { f1: 5#########, f2: 10######## }, f3: Hi }",
         format!("{:#<10.2?}", outer)
     );
-    assert_eq!("Outer {\n    f1: 1.23######,\n    f2: Inner {\n        f1: 5#########,\n        f2: 10########,\n    },\n    f3: Hi,\n}", format!("{:#<#10.2?}", outer));
+    assert_eq!(
+        "Outer {\n    f1: 1.23######,\n    f2: Inner {\n        f1: 5#########,\n        f2: \
+         10########,\n    },\n    f3: Hi,\n}",
+        format!("{:#<#10.2?}", outer)
+    );
 }
 
 #[test]
@@ -344,8 +353,7 @@ fn fake_struct() {
     }
 
     let outer = Outer(1.23456789, Inner {
-        f1: 5,
-        f2: 10,
+        f1: 5, f2: 10
     });
 
     assert_eq!("Outer { f1: 1.23456789 }", format!("{:?}", outer));

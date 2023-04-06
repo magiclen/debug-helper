@@ -27,8 +27,7 @@ fn signed_values() {
         f2: -2,
         f3: 3.0,
         f4: Inner {
-            f1: 4,
-            f2: -5,
+            f1: 4, f2: -5
         },
     };
 
@@ -66,8 +65,7 @@ fn zero_values() {
         f2: -2,
         f3: 3.0,
         f4: Inner {
-            f1: 4,
-            f2: -5,
+            f1: 4, f2: -5
         },
     };
 
@@ -87,8 +85,24 @@ fn zero_values() {
         "MyStruct { f1: 000+1, f2: 000-2, f3: 0+3.0, f4: Inner { f1: 000+4, f2: 000-5 } }",
         format!("{:0>+5?}", my_struct)
     );
-    assert_eq!("MyStruct {\n    f1: 00001,\n    f2: -0002,\n    f3: 003.0,\n    f4: Inner {\n        f1: 00004,\n        f2: -0005,\n    },\n}", format!("{:#05?}", my_struct));
-    assert_eq!("MyStruct {\n    f1: 00001,\n    f2: 000-2,\n    f3: 003.0,\n    f4: Inner {\n        f1: 00004,\n        f2: 000-5,\n    },\n}", format!("{:0>#5?}", my_struct));
-    assert_eq!("MyStruct {\n    f1: +0001,\n    f2: -0002,\n    f3: +03.0,\n    f4: Inner {\n        f1: +0004,\n        f2: -0005,\n    },\n}", format!("{:+#05?}", my_struct));
-    assert_eq!("MyStruct {\n    f1: 000+1,\n    f2: 000-2,\n    f3: 0+3.0,\n    f4: Inner {\n        f1: 000+4,\n        f2: 000-5,\n    },\n}", format!("{:0>+#5?}", my_struct));
+    assert_eq!(
+        "MyStruct {\n    f1: 00001,\n    f2: -0002,\n    f3: 003.0,\n    f4: Inner {\n        f1: \
+         00004,\n        f2: -0005,\n    },\n}",
+        format!("{:#05?}", my_struct)
+    );
+    assert_eq!(
+        "MyStruct {\n    f1: 00001,\n    f2: 000-2,\n    f3: 003.0,\n    f4: Inner {\n        f1: \
+         00004,\n        f2: 000-5,\n    },\n}",
+        format!("{:0>#5?}", my_struct)
+    );
+    assert_eq!(
+        "MyStruct {\n    f1: +0001,\n    f2: -0002,\n    f3: +03.0,\n    f4: Inner {\n        f1: \
+         +0004,\n        f2: -0005,\n    },\n}",
+        format!("{:+#05?}", my_struct)
+    );
+    assert_eq!(
+        "MyStruct {\n    f1: 000+1,\n    f2: 000-2,\n    f3: 0+3.0,\n    f4: Inner {\n        f1: \
+         000+4,\n        f2: 000-5,\n    },\n}",
+        format!("{:0>+#5?}", my_struct)
+    );
 }

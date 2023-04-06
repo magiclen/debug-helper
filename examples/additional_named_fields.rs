@@ -14,9 +14,7 @@ impl Debug for A {
 
 fn main() {
     let a = A {
-        f1: 1,
-        f2: 2,
-        f3: std::f64::consts::PI,
+        f1: 1, f2: 2, f3: std::f64::consts::PI
     };
 
     println!("{:#?}", a);
