@@ -9,7 +9,6 @@ homepage = "https://magiclen.org/debug-helper"
 keywords = ["debug", "macro", "declarative", "format", "trait"]
 categories = ["no-std", "development-tools::debugging"]
 description= "This crate provides declarative macros to help you implement the `Debug` trait manually."
-readme = "README.md"
 license = "MIT"
 include = ["src/**/*", "Cargo.toml", "README.md", "LICENSE"]
 
