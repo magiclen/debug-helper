@@ -344,6 +344,7 @@ fn fake_struct() {
         f2: u8,
     }
 
+    #[allow(dead_code)]
     struct Outer(f64, Inner);
 
     impl Debug for Outer {
