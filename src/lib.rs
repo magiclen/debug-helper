@@ -288,23 +288,29 @@ println!("{:#?}", a);
 
 extern crate alloc;
 
-use alloc::{
-    fmt::{Debug, Formatter, Result as FormatResult},
-    string::String,
-};
-
 #[doc(hidden)]
-pub struct RawString(pub String);
+pub mod __private {
+    pub use alloc::format;
+    use alloc::{
+        fmt::{Debug, Formatter, Result as FormatResult},
+        string::String,
+    };
 
-impl Debug for RawString {
-    fn fmt(&self, f: &mut Formatter<'_>) -> FormatResult {
-        if f.alternate() {
-            f.write_str(self.0.replace('\n', "\n    ").as_str())
-        } else {
-            f.write_str(self.0.as_str())
+    pub struct RawString(pub String);
+
+    impl Debug for RawString {
+        fn fmt(&self, f: &mut Formatter<'_>) -> FormatResult {
+            if f.alternate() {
+                f.write_str(self.0.replace('\n', "\n    ").as_str())
+            } else {
+                f.write_str(self.0.as_str())
+            }
         }
     }
 }
+
+#[doc(hidden)]
+pub use __private::RawString;
 
 #[macro_export]
 macro_rules! impl_debug_for_struct {
@@ -323,7 +329,7 @@ macro_rules! impl_debug_for_struct {
                 )?
 
                 $(
-                    builder.field(stringify!($field_2), &$crate::RawString(format!($($field_2_fmt)*)));
+                    builder.field(stringify!($field_2), &$crate::__private::RawString($crate::__private::format!($($field_2_fmt)*)));
                 )?
 
                 $(
@@ -353,7 +359,7 @@ macro_rules! impl_debug_for_tuple_struct {
                 )?
 
                 $(
-                    builder.field(&$crate::RawString(format!($($field_2_fmt)*)));
+                    builder.field(&$crate::__private::RawString($crate::__private::format!($($field_2_fmt)*)));
                 )?
 
                 $(
@@ -389,7 +395,7 @@ macro_rules! impl_debug_for_enum {
                                     )?
 
                                     $(
-                                        builder.field(&$crate::RawString(format!($($t_field_2_fmt)*)));
+                                        builder.field(&$crate::__private::RawString($crate::__private::format!($($t_field_2_fmt)*)));
                                     )?
 
                                     $(
@@ -412,7 +418,7 @@ macro_rules! impl_debug_for_enum {
                                     )?
 
                                     $(
-                                        builder.field(stringify!($s_field_2), &$crate::RawString(format!($($s_field_2_fmt)*)));
+                                        builder.field(stringify!($s_field_2), &$crate::__private::RawString($crate::__private::format!($($s_field_2_fmt)*)));
                                     )?
 
                                     $(
@@ -442,7 +448,7 @@ macro_rules! impl_debug_for_enum {
                     )?
                     $(
                         Self::$variant_tuple ($($tuple)*)=> {
-                            let mut builder = $formatter.debug_tuple(&format!("{}::{}", stringify!($enum_name), stringify!($variant_tuple)));
+                            let mut builder = $formatter.debug_tuple(concat!(stringify!($enum_name), "::", stringify!($variant_tuple)));
 
                             $(
                                 $(
@@ -451,7 +457,7 @@ macro_rules! impl_debug_for_enum {
                                     )?
 
                                     $(
-                                        builder.field(&$crate::RawString(format!($($t_field_2_fmt)*)));
+                                        builder.field(&$crate::__private::RawString($crate::__private::format!($($t_field_2_fmt)*)));
                                     )?
 
                                     $(
@@ -465,7 +471,7 @@ macro_rules! impl_debug_for_enum {
                     )?
                     $(
                         Self::$variant_struct {$($struct)*}=> {
-                            let mut builder = $formatter.debug_struct(&format!("{}::{}", stringify!($enum_name), stringify!($variant_struct)));
+                            let mut builder = $formatter.debug_struct(concat!(stringify!($enum_name), "::", stringify!($variant_struct)));
 
                             $(
                                 $(
@@ -474,7 +480,7 @@ macro_rules! impl_debug_for_enum {
                                     )?
 
                                     $(
-                                        builder.field(stringify!($s_field_2), &$crate::RawString(format!($($s_field_2_fmt)*)));
+                                        builder.field(stringify!($s_field_2), &$crate::__private::RawString($crate::__private::format!($($s_field_2_fmt)*)));
                                     )?
 
                                     $(
